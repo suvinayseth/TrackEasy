@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TrackEasy</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="/static/css/app.css" rel="stylesheet">
+		<style>
+			body {
+				padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+			}
+		</style>
+		<!-- <link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet"> -->
+		<link rel="stylesheet" href="/static/css/datepicker.css">
+		<script src="https://code.jquery.com/jquery-latest.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+		<!--<script src="http://malsup.github.com/jquery.form.js"></script>-->
+		<script src="/static/js/moment.min.js"></script>
+		 <script src="/static/js/bootstrap-datepicker.js"></script>
+	</head>
+	<body>
+		<div class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li id="nav_tab_trackeasy"><a href="/trackeasy/" style="font-size:150%;padding-bottom:26px;padding-left:14px;">Event Log</a></li>
+						<li id="nav_tab_mismatch"><a href="/trackeasy/mismatch/" style="font-size:150%;padding-bottom:26px">Audit</a></li>
+						<li id="nav_tab_misbehave"><a href="/trackeasy/misbehave/" style="font-size:150%;padding-bottom:26px">Alert</a></li>
+					</ul>
+					<div class="nav navbar-nav navbar-right">
+						<button data-toggle="modal" data-target="#myInfoModal" aria-haspopup="true" role="button" aria-expanded="false" class="btn btn-default" style="font-size: 140%;padding-top: 1px;margin-left: 7px;margin-top: 20px;padding-bottom: 3px;">Info</a>
+			        </div>
+					<div class="nav navbar-nav navbar-right text-center" style="padding-left:10px">
+						<span>Service</span>
+						<div class="dropdown">
+							<button id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="btn btn-default">All&#9660;</button>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li class="service_list"><a href="#">All</a></li>
+								<li class="service_list"><a href="#">Rent</a></li>
+								<li class="service_list"><a href="#">Buy</a></li>
+								<li class="service_list"><a href="#">New Projects</a></li>
+								<li class="service_list"><a href="#">PG & Hostels</a></li>
+								<li class="service_list"><a href="#">Home Loans</a></li>
+								<li class="service_list"><a href="#">Sell or Rent Property</a></li>
+								<li class="service_list"><a href="#">Serviced Apartments</a></li>
+								<li class="service_list"><a href="#">Rental Agreements</a></li>
+								<li class="service_list"><a href="#">Land</a></li>
+								<li class="service_list"><a href="#">Plot Projects</a></li>
+								<li class="service_list"><a href="#">Agents</a></li>
+								<li class="service_list"><a href="#">Miscellaneous</a></li>
+							</ul>
+						</div>
+			        </div>
+			        <div class="nav navbar-nav navbar-right text-center">
+						<span>Device</span>
+						<div class="dropdown">
+							<button id="deviceLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="btn btn-default">All&#9660;</button>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="deviceLabel">
+								<li class="device_list"><a href="#">All</a></li>
+								<li class="device_list"><a href="#">Mobile Web</a></li>
+								<li class="device_list"><a href="#">Desktop</a></li>
+								<li class="device_list"><a href="#">Android</a></li>
+								<li class="device_list"><a href="#">IOS</a></li>
+							</ul>
+						</div>
+			        </div>
+				</div>
+			</div>
+		</div>
+		<div id="content">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</body>
+</html>

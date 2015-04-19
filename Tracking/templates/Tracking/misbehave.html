@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="/static/js/misbehave.js"></script>
+<div class="container">
+	<div class="row" style="margin-top:35px;">
+		<div class="col-md-3" style="padding-left:0px;padding-right:5px;">
+			<p class="text-center">Time Range 1</p>
+			<div class="col-md-6" style="padding-right:2px;">
+			    <div class="input-append date" data-date-format="dd-mm-yyyy">
+					<input class="span2 datepicker form-control" size="16" type="text" id="dp1" placeholder="Select From Date" min="02/03/2015">
+			    </div>
+		    </div>
+		    <div class="col-md-6" style="padding-left:2px;">
+			    <div class="input-append date" data-date-format="dd-mm-yyyy">
+					<input class="span2 datepicker form-control" size="16" type="text" id="dp2" placeholder="Select To Date" min="02/03/2015">
+			    </div>
+		    </div>
+		</div>
+		<div class="col-md-3" style="padding-left:5px;">
+			<p class="text-center">Time Range 2</p>
+		    <div class="col-md-6" style="padding-right:2px;">
+			    <div class="input-append date" data-date-format="dd-mm-yyyy">
+					<input class="span2 datepicker form-control" size="16" type="text" id="dp3" placeholder="Select From Date" min="02/03/2015">
+			    </div>
+		    </div>
+		    <div class="col-md-6" style="padding-left:2px;">
+			    <div class="input-append date" data-date-format="dd-mm-yyyy">
+					<input class="span2 datepicker form-control" size="16" type="text" id="dp4" placeholder="Select To Date" min="02/03/2015">
+			    </div>
+		    </div>
+		</div>
+		<div class="col-md-2 pull-right" style="padding-top:30px;">
+			<button class="btn btn-danger" id="updateList">Update</button>
+		</div>
+	</div>
+	<div class="modal fade" id="myInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Info on TrackEasy</h4>
+					</div>
+					<div class="modal-body">
+						<p> Put info here </p>
+					</div>
+				</div>
+			</div>
+	</div>
+	<div class="modal fade" id="myShowImageModal" tabindex="-1" role="dialog" aria-labelledby="myShowImageModalLabel" aria-hidden="true">
+		<div class="modal-dialog event_image_modal_dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myShowImageModalLabel">Event Image</h4>
+				</div>
+				<div class="modal-body event_image_modal_body" id="showImageModalBody">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myShowEventInfoModal" tabindex="-1" role="dialog" aria-labelledby="myShowEventInfoModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myShowEventInfoModalLabel">Event Information</h4>
+				</div>
+				<div class="modal-body" id="showEventInfoModalBody">
+					<div id="showEventDatetimeInfo">
+					</div>
+					<div id="showEventComments">
+					</div>
+					<div id="addComment">
+						<br>
+						<br>
+						<p> Author </p>
+						<input id="commentAuthor">
+						<br>
+						<br>
+						<p> Comment </p>
+						<input id="eventComment">
+						<br>
+						<br>
+						<button class="btn btn-primary addCommentButton">Add Comment</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<br>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default" style="margin-top:60px;">
+		<div class="panel-body" style="padding:7px;">
+			<div class="page-header" style="margin-top:25px;">
+				<h2>List
+					<small>
+						click on update to populate the list
+					</small>
+				</h2>
+			</div>
+			<div id="behavior_list">
+			</div>
+		</div>
+		<!-- <div class="panel-footer">The List</div> -->
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="/static/js/mismatch.js"></script>
+<div class="container">
+	<ul class="nav nav-tabs" style="padding-top:30px">
+	  <li role="presentation" id="getMatchData_li"><a href="#" id="getMatchData">Match</a></li>
+	  <li role="presentation" id="getMismatchData_li"><a href="#" id="getMismatchData">Mismatch</a></li>
+	</ul>
+	<div class="modal fade" id="myInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Info on TrackEasy</h4>
+					</div>
+					<div class="modal-body">
+						<p> Put info here </p>
+					</div>
+				</div>
+			</div>
+	</div>
+	<div class="modal fade" id="myEditModal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width:700px;margin-top:125px;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myEditModalLabel">Edit event details</h4>
+				</div>
+				<div class="modal-body" style="padding-bottom:165px;">
+					<div class="col-md-2" style="width:19%;padding-right:0px">
+						<p> Device </p>
+						<div id="editModalDevice">
+						</div>
+					</div>
+					<div class="col-md-3" style="margin-right:10px" >
+						<p> Service </p>
+						<div id="editModalService">
+						</div>
+					</div>
+					<div class="col-md-3" style="width:27%;">
+						<p> Event Category </p>
+						<input class="form-control"  id="editeventCategory">
+					</div>
+					<div class="col-md-3" style="width:25%;">
+						<p> Event Action </p>
+						<input class="form-control" id="editeventAction">
+					</div>
+					<div class="col-md-12" style="padding-top:20px">
+					<p> Event Label </p>
+					<input class="form-control" id="editeventLabel">
+					</div>
+				</div>
+				<div class="modal-footer" style="padding-top:14px;height:70px">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary editEventClass" id="editEvent">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myUploadModal" tabindex="-1" role="dialog" aria-labelledby="myUploadModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myUploadModalLabel">Upload Event Image</h4>
+				</div>
+				<div class="modal-body">
+					<!-- Upload form. Note enctype attribute! -->
+					<form action="{% url 'edit' %}" method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<p>{{ form.non_field_errors }}</p>
+						<p>{{ form.upload_file.label_tag }} {{ form.upload_file.help_text }}</p>
+						<p>
+							{{ form.upload_file.errors }}
+							{{ form.upload_file }}
+						</p>
+						<div id="uploadeventService">
+						</div>
+						<p><input type="submit" value="Upload" /></p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myShowImageModal" tabindex="-1" role="dialog" aria-labelledby="myShowImageModalLabel" aria-hidden="true">
+		<div class="modal-dialog event_image_modal_dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myShowImageModalLabel">Event Image</h4>
+				</div>
+				<div class="modal-body event_image_modal_body" id="showImageModalBody">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="myShowEventInfoModal" tabindex="-1" role="dialog" aria-labelledby="myShowEventInfoModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myShowEventInfoModalLabel">Event Information</h4>
+				</div>
+				<div class="modal-body" id="showEventInfoModalBody">
+					<div id="showEventDatetimeInfo">
+					</div>
+					<div id="showEventComments">
+					</div>
+					<div id="addComment">
+						<br>
+						<br>
+						<p> Author </p>
+						<input id="commentAuthor">
+						<br>
+						<br>
+						<p> Comment </p>
+						<input id="eventComment">
+						<br>
+						<br>
+						<button class="btn btn-primary addCommentButton">Add Comment</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<br>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default" style="margin-top:25px;">
+		<div class="panel-body">
+			<div class="page-header" style="margin-top:25px;">
+				<h2>List
+					<small>
+						click on update to populate the list
+						<button class="btn btn-danger" id="updateList" style="margin-left:500px">Update</button>
+					</small>
+				</h2>
+			</div>
+			<div id="mismatch_list">
+			</div>
+		</div>
+		<!-- <div class="panel-footer">The List</div> -->
+	</div>
+</div>
+{% endblock %}
