@@ -10,13 +10,12 @@ $(function(){
             background: 'url(/static/gif/ajax-loader-circle.gif) no-repeat center'
         }).hide().appendTo('body');
 
-    
-
 
     $("#nav_tab_trackeasy").addClass("active");
     $("#nav_tab_mismatch").removeClass("active");
     $("#nav_tab_misbehave").removeClass("active");
 
+    
     if(localStorage.getItem("eventsDisplayService") == null){
         localStorage.setItem("eventsDisplayService", "All");
         $("#dLabel").text('All'+'▼');    
@@ -33,7 +32,6 @@ $(function(){
         $("#deviceLabel").text(localStorage.getItem("eventsDisplayDevice")+'▼');
     }
     
-
 
 
     var showDataByServiceAndDevice = function(var_service, var_device) {
@@ -59,6 +57,7 @@ $(function(){
             },
             error: function(err) {
                 console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
             }
         })
     }
@@ -68,6 +67,7 @@ $(function(){
     
 
     $('#addNewEvent').click(function(event) {
+        $("#overlay").show()
         console.log("inside add new event function");
         event.preventDefault();
         // TODO : validate entries
@@ -86,10 +86,10 @@ $(function(){
                     url: "/trackeasy/",
                     data: {
                         'name': 'add_event',
-                        'event_category': $('#eventCategory').val().trim().replace('-','_'),
-                        'event_action': $('#eventAction').val().trim().replace('-','_'),
+                        'event_category': $('#eventCategory')[0].selectize.items[0].trim().replace('-','_'),
+                        'event_action': $('#eventAction')[0].selectize.items[0].trim().replace('-','_'),
                         'event_service': var_temp_event_service,
-                        'event_label': $('#eventLabel').val().trim().replace('-','_'),
+                        'event_label': $('#eventLabel')[0].selectize.items.join(',').trim().replace('-','_'),
                         'event_device': var_temp_event_device,
                     },
                     success: function(data) {
@@ -106,9 +106,11 @@ $(function(){
                             document.getElementById("eventAction").value = "";
                             document.getElementById("eventLabel").value = "";
                         }
+                        $("#overlay").hide()
                     },
                     error: function(err) {
                         console.log("error: ", err);
+                        $("#overlay").hide()
                     }
                 })
             }
@@ -269,25 +271,25 @@ $(function(){
                             <div class="col-md-2">\
                                 <h4> Device </h4>\
                                 <div class="highlight" style="padding:0px 9px;margin-bottom:0px;border:2px;">\
-                                    <p id="approved_data_ed_'+num+'" ></p>\
+                                    <p id="data_ed_'+num+'" ></p>\
                                 </div>\
                             </div>\
                             <div class="col-md-2">\
                                 <h4> Service </h4>\
                                 <div class="highlight" style="padding:0px 9px;margin-bottom:0px;border:2px;">\
-                                    <p id="approved_data_es_'+num+'" ></p>\
+                                    <p id="data_es_'+num+'" ></p>\
                                 </div>\
                             </div>\
                             <div class="col-md-4">\
                                 <h4> Event Category </h4>\
                                 <div class="highlight" style="padding:0px 9px;margin-bottom:0px;border:2px;">\
-                                    <p id="approved_data_ec_'+num+'" ></p>\
+                                    <p id="data_ec_'+num+'" ></p>\
                                 </div>\
                             </div>\
                             <div class="col-md-4">\
                                 <h4> Event Action </h4>\
                                 <div class="highlight" style="padding:0px 9px;margin-bottom:0px;border:2px;">\
-                                    <p id="approved_data_ea_'+num+'" ></p>\
+                                    <p id="data_ea_'+num+'" ></p>\
                                 </div>\
                             </div>\
                         </div>\
@@ -314,7 +316,7 @@ $(function(){
                                                 <span class="caret"></span>\
                                         </button>\
                                         <ul class="dropdown-menu" role="menu" >\
-                                            <li id="edit_'+num+'" class="editApproved" data-toggle="modal" data-target="#myEditModal"><a>Edit</a></li>\
+                                            <li id="edit_'+num+'" class="edit" data-toggle="modal" data-target="#myEditModal"><a>Edit</a></li>\
                                             <li id="duplicate_'+num+'" class="duplicate"><a>Duplicate</a></li>\
                                             <li id="delete_'+num+'" class="delete"><a>Delete</a></li>\
                                         </ul>\
@@ -326,7 +328,7 @@ $(function(){
                             <div class="col-md-12">\
                                 <h4> Event Label </h4>\
                                 <div class="highlight" style="padding:0px 9px;margin-bottom:0px;border:2px;">\
-                                    <p id="approved_data_el_'+num+'"></p>\
+                                    <p id="data_el_'+num+'"></p>\
                                 </div>\
                         </div>\
                     </div>\
@@ -341,11 +343,11 @@ $(function(){
         // $('.imageshow_wrapper').tooltip();
         $('.image_wrapper').tooltip();
         $('.eventinfo_wrapper').tooltip();
-        $("#approved_data_ec_"+num).text(String(approved_doc.event_category).replace('_','-'));
-        $("#approved_data_ea_"+num).text(String(approved_doc.event_action).replace('_','-'));
-        $("#approved_data_es_"+num).text(approved_doc.event_service);
-        $("#approved_data_ed_"+num).text(approved_doc.event_device);
-        $("#approved_data_el_"+num).text(approved_doc.event_label);
+        $("#data_ec_"+num).text(String(approved_doc.event_category).replace('_','-'));
+        $("#data_ea_"+num).text(String(approved_doc.event_action).replace('_','-'));
+        $("#data_es_"+num).text(approved_doc.event_service);
+        $("#data_ed_"+num).text(approved_doc.event_device);
+        $("#data_el_"+num).text(approved_doc.event_label);
 
     }
 
@@ -368,6 +370,49 @@ $(function(){
         else{
             eventDeviceText = $("#deviceLabel").text()
         }
+        $("#overlay").show()
+        $.ajax({
+            type: "GET",
+            url: "/trackeasy/",
+            data: {
+                'name': 'get_suggestion_data',
+            },
+            success: function(data) {
+                console.log("Ajax: GET suggestion data success");
+                console.log(data)
+                
+                var selectize = $("#eventCategory")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.categories.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.categories[i],value:data.categories[i]})
+                };
+                
+                selectize = $("#eventAction")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.actions.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.actions[i],value:data.actions[i]})
+                };
+                
+                selectize = $("#eventLabel")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.labels.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.labels[i],value:data.labels[i]})
+                };
+                data.base_labels.sort()
+                for (var i = 0; i < data.base_labels.length; i++) {
+                    selectize.addItem(data.base_labels[i],'silent')
+                };
+                
+                $("#overlay").hide()
+            },
+            error: function(err) {
+                console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
+            }
+        })
         $('#addModalService').html("");
         $('#addModalService').append("\
             <div class='dropdown'>\
@@ -493,11 +538,66 @@ $(function(){
         var id = $(this).attr('id');
         id = id.split('_');
         id = id[id.length-1];
-        $("#editeventCategory").val($("#data_ec_" + id).text());
-        $("#editeventAction").val($("#data_ea_" + id).text());
-        $("#editeventLabel").val($("#data_el_" + id).text());
+        // $("#editeventCategory").val($("#data_ec_" + id).text());
+        // $("#editeventAction").val($("#data_ea_" + id).text());
+        // $("#editeventLabel").val($("#data_el_" + id).text());
         var_temp_edit_event_service = $("#data_es_" + id).text() + '▼'
         var_temp_edit_event_device = $("#data_ed_" + id).text() + '▼'
+        $("#overlay").show()
+        $.ajax({
+            type: "GET",
+            url: "/trackeasy/",
+            data: {
+                'name': 'get_suggestion_data'
+            },
+            success: function(data) {
+                console.log("Ajax: GET suggestion data success");
+                console.log(data)
+                
+                var selectize = $("#editeventCategory")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.categories.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.categories[i],value:data.categories[i]})
+                };
+                selectize.addOption({text:$("#data_ec_" + id).text(),value:$("#data_ec_" + id).text()})
+                selectize.addItem($("#data_ec_" + id).text(),'silent')
+
+                
+                selectize = $("#editeventAction")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.actions.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.actions[i],value:data.actions[i]})
+                };
+                selectize.addOption({text:$("#data_ea_" + id).text(),value:$("#data_ea_" + id).text()})
+                selectize.addItem($("#data_ea_" + id).text(),'silent')
+
+                
+
+                selectize = $("#editeventLabel")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.labels.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.labels[i],value:data.labels[i]})
+                };
+                var base_labels = $("#data_el_" + id).text().split(',')
+                base_labels.sort()
+                for (var i = 0; i < base_labels.length; i++) {
+                    selectize.addOption({text:base_labels[i],value:base_labels[i]})
+                };
+                for (var i = 0; i < base_labels.length; i++) {
+                    selectize.addItem(base_labels[i],'silent')
+                };
+
+                
+                $("#overlay").hide()
+            },
+            error: function(err) {
+                console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
+            }
+        })
         $('#editModalService').html("");
         $('#editModalService').append("\
             <div class='dropdown'>\
@@ -544,63 +644,6 @@ $(function(){
         console.log('edit modal save id is',$(".editEventClass").attr("id"));
     })
 
-    $(document).on('click', '.editApproved', function (){
-        console.log(" edit Approved Event clicked");
-        var id = $(this).attr('id');
-        id = id.split('_');
-        id = id[id.length-1];
-        console.log('please print this');
-        $("#editeventCategory").val($("#approved_data_ec_" + id).text());
-        $("#editeventAction").val($("#approved_data_ea_" + id).text());
-        $("#editeventLabel").val($("#approved_data_el_" + id).text());
-        var_temp_edit_event_service = $("#approved_data_es_" + id).text() + '▼'
-        var_temp_edit_event_device = $("#approved_data_ed_" + id).text() + '▼'
-        $('#editModalService').html("");
-        $('#editModalService').append("\
-            <div class='dropdown'>\
-                <button id='editModalServiceDropdown' data-target='#' href='http://example.com' data-toggle='dropdown' aria-haspopup='true' role='button' aria-expanded='false' class='btn btn-default'>"+var_temp_edit_event_service+"</button>\
-                    <ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>\
-                        <li class='editModalservice_list'><a href='#'>Rent</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Buy</a></li>\
-                        <li class='editModalservice_list'><a href='#'>New Projects</a></li>\
-                        <li class='editModalservice_list'><a href='#'>PG & Hostels</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Home Loans</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Sell or Rent Property</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Serviced Apartments</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Rental Agreements</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Land</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Plot Projects</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Agents</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Miscellaneous</a></li>\
-                    </ul>\
-            </div>");
-        $('#editModalDevice').html("");
-        $('#editModalDevice').append("\
-            <div class='dropdown'>\
-                <button id='editModalDeviceDropdown' data-target='#' href='http://example.com' data-toggle='dropdown' aria-haspopup='true' role='button' aria-expanded='false' class='btn btn-default'>"+var_temp_edit_event_device+"</button>\
-                    <ul class='dropdown-menu' role='menu' aria-labelledby='deviceLabel'>\
-                        <li class='editModaldevice_list'><a href='#'>Mobile Web</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>Desktop</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>Android</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>IOS</a></li>\
-                    </ul></div>");
-        
-        $(document).on('click', '.editModalservice_list', function(){
-            console.log("edit Modal dropdown service selected");
-            event.preventDefault();
-            $("#editModalServiceDropdown").text($(this).text()+'▼');
-        });
-        $(document).on('click', '.editModaldevice_list', function(){
-            console.log("edit Modal dropdown device selected");
-            event.preventDefault();
-            $("#editModalDeviceDropdown").text($(this).text()+'▼');
-        });
-        
-        $(".editEventClass").attr("id", "editEvent_" + id);
-        console.log('entry id is',id);
-        console.log('edit modal save id is',$(".editEventClass").attr("id"));
-    })
-
 
     $('.editEventClass').click(function(event) {
         console.log("inside edit event function");
@@ -620,10 +663,10 @@ $(function(){
                 url: "/trackeasy/edit/",
                 data: {
                     'name': 'editEvent', 
-                    'event_category': $('#editeventCategory').val().trim().replace('-','_'),
-                    'event_action': $('#editeventAction').val().trim().replace('-','_'),
+                    'event_category': $('#editeventCategory')[0].selectize.items[0].trim().replace('-','_'),
+                    'event_action': $('#editeventAction')[0].selectize.items[0].trim().replace('-','_'),
                     'event_service': var_temp_edit_event_service,
-                    'event_label': $('#editeventLabel').val().trim().replace('-','_'),
+                    'event_label': $('#editeventLabel')[0].selectize.items.join(',').trim().replace('-','_'),
                     'event_device': var_temp_edit_event_device,
                     'id':id
                 },
@@ -714,7 +757,6 @@ $(function(){
         localStorage.setItem("eventsDisplayDevice", var_temp_event_device);
         $('#uploadeventService').html("");
         $('#uploadeventService').append("<input type='hidden' name='uploadeventId' value="+id+">");
-        
     })
 
     
@@ -727,7 +769,6 @@ $(function(){
         console.log(id)
         $('#showImageModalBody').html("");
         $('#showImageModalBody').append("<img src='/static/images/"+ id + ".png'>");
-        
     })
 
     $(document).on('click', '.eventinfo', function (){
@@ -798,9 +839,6 @@ $(function(){
                 console.log("Ajax: Get error: ", err);
             }
         })
-
-        
-        
     })
 
     $('.addCommentButton').click(function(event) {
@@ -831,8 +869,6 @@ $(function(){
                 console.log("error: ", err);
             }
         })
-
-
     });
 
     

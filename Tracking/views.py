@@ -40,16 +40,22 @@ service_map_dict = {
 	'all':'all',
 	'rent':'rent',
 	'buy':'buy',
-	'new-projects':'new-projects',
-	'pg':'pg',
-	'home-loans':'home-loans',
+	'new projects':'new-projects',
+	'pg & hostels':'pg',
+	'home loans':'home-loans',
 	'sell or rent property':'sell or rent property',
+	'serviced apartments':'serviced-apartments',
+	'rental agreements':'rental-agreements',
+	'land':'land',
+	'plot projects':'plot-projects',
+	'agents':'agents',
+	'miscellaneous':'miscellaneous',
+	'new-projects':'new-projects',
+	'home-loans':'home-loans',
 	'serviced-apartments':'serviced-apartments',
 	'rental-agreements':'rental-agreements',
 	'land':'land',
-	'plot-projects':'plot-projects',
-	'agents':'agents',
-	'miscellaneous':'miscellaneous'
+	'plot-projects':'plot-projects'
 }
 device_map_dict = {
 	'All':'all',
@@ -57,11 +63,12 @@ device_map_dict = {
 	'Desktop':'desktop',
 	'Android':'android',
 	'IOS':'ios',
+	'mobile web':'mobile',
 	'all':'all',
 	'mobile':'mobile',
 	'desktop':'desktop',
 	'android':'android',
-	'ios':'ios',
+	'ios':'ios'
 }
 
 
@@ -133,6 +140,11 @@ def track_app(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 	
+	if request.is_ajax() and request.GET and request.GET['name']=='get_suggestion_data':
+		print request
+		suggestions = suggestion_data.objects[1].to_json()
+		return HttpResponse(suggestions, content_type="application/json")
+
 	form = UploadForm()
 	print form
 	return render_to_response('Tracking/trackeasy.html',

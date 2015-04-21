@@ -24,3 +24,9 @@ class tracking_event(Document):
 	event_comments = ListField(EmbeddedDocumentField(tracking_event_comments))
 	has_mongo_match = BooleanField(required=True, default=False)
 
+class suggestion_data(Document):
+	actions = ListField(StringField(required=True))
+	categories = ListField(StringField(required=True))
+	labels = ListField(StringField(required=True))
+	base_labels = ListField(StringField(required=True))
+

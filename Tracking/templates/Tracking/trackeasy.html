@@ -2,7 +2,6 @@
 {% block content %}
 <script src="/static/js/trackeasy.js"></script>
 <div class="container">
-	<div class="alert alert-danger" role="alert" style="display: none;" id="error"><span id="addError"></span> cannot be empty</div>
 	<div class="row">
 		<div class="text-center col-md-12" style="margin-top:35px;margin-bottom:35px">
 			<button class="btn btn-lg btn-danger addEventModal" data-toggle="modal" data-target="#myModal">Add Event</button>
@@ -41,15 +40,66 @@
 					</div>
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Category </p>
-						<input class="form-control"  id="eventCategory">
+						<div>
+							<select id="eventCategory" placeholder="Select category...">
+							</select>
+						</div>
+						<script>
+							$('#eventCategory').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+							});
+						</script>
 					</div>
-					<div class="col-md-3" style="width:25%;">
+					<div class="col-md-3" style="width:27%;">
 						<p> Event Action </p>
-						<input class="form-control" id="eventAction">
+						<div>
+							<select id="eventAction" placeholder="Select action...">
+							</select>
+						</div>
+						<script>
+							$('#eventAction').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+							});
+						</script>
 					</div>
 					<div class="col-md-12" style="padding-top:20px">
-					<p> Event Label </p>
-					<input class="form-control" id="eventLabel">
+						<p> Event Label </p>
+						<input class="form-control" id="eventLabel">
+						<script>
+							$('#eventLabel').selectize({
+								persist: true,
+								createOnBlur: true,
+								create: true,
+								highlight: false,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+							});
+						</script>
 					</div>
 				</div>
 				<div class="modal-footer" style="padding-top:14px;height:70px">
@@ -79,15 +129,66 @@
 					</div>
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Category </p>
-						<input class="form-control"  id="editeventCategory">
+						<div>
+							<select id="editeventCategory" placeholder="Select category...">
+							</select>
+						</div>
+						<script>
+							$('#editeventCategory').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+							});
+						</script>
 					</div>
-					<div class="col-md-3" style="width:25%;">
+					<div class="col-md-3" style="width:27%;">
 						<p> Event Action </p>
-						<input class="form-control" id="editeventAction">
+						<div>
+							<select id="editeventAction" placeholder="Select action...">
+							</select>
+						</div>
+						<script>
+							$('#editeventAction').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+							});
+						</script>
 					</div>
 					<div class="col-md-12" style="padding-top:20px">
-					<p> Event Label </p>
-					<input class="form-control" id="editeventLabel">
+						<p> Event Label </p>
+						<input class="form-control" id="editeventLabel">
+						<script>
+							$('#editeventLabel').selectize({
+								persist: true,
+								createOnBlur: true,
+								create: true,
+								highlight: false,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+							});
+						</script>
 					</div>
 				</div>
 				<div class="modal-footer" style="padding-top:14px;height:70px">
