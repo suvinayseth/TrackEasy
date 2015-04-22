@@ -225,7 +225,7 @@ $(function(){
         $("#data_ea_"+num).text(String(mismatch_app_doc.event_action).replace('_','-'));
         $("#data_es_"+num).text(mismatch_app_doc.event_service);
         $("#data_ed_"+num).text(mismatch_app_doc.event_device);
-        $("#data_el_"+num).text(mismatch_app_doc.event_label);
+        $("#data_el_"+num).text(String(mismatch_app_doc.event_label).replace(new RegExp(",", "g"), ' , '));
 
     }
 

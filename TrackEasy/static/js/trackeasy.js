@@ -47,6 +47,7 @@ $(function(){
             },
             success: function(data) {
                 console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                console.log(data)
                 for (var i = data.backlog.length - 1; i >= 0; i--) {
                     createBackLog(jQuery.parseJSON(data.backlog[i]));
                 };
@@ -86,10 +87,10 @@ $(function(){
                     url: "/trackeasy/",
                     data: {
                         'name': 'add_event',
-                        'event_category': $('#eventCategory')[0].selectize.items[0].trim().replace('-','_'),
-                        'event_action': $('#eventAction')[0].selectize.items[0].trim().replace('-','_'),
+                        'event_category': $('#eventCategory')[0].selectize.items[0].trim().replace(new RegExp("-", "g"),'_'),
+                        'event_action': $('#eventAction')[0].selectize.items[0].trim().replace(new RegExp("-", "g"),'_'),
                         'event_service': var_temp_event_service,
-                        'event_label': $('#eventLabel')[0].selectize.items.join(',').trim().replace('-','_'),
+                        'event_label': $('#eventLabel')[0].selectize.items.join(',').trim().replace(new RegExp("-", "g"),'_'),
                         'event_device': var_temp_event_device,
                     },
                     success: function(data) {
@@ -98,6 +99,7 @@ $(function(){
                         }
                         else{
                             console.log(" ajax : new event POST Success");
+                            console.log(data)
                             $('#myModal').modal('hide');
                             $("#backlog_docs").html("");
                             $("#approved_docs").html("");
@@ -239,11 +241,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(backlog_doc.event_category).replace('_','-'));
-        $("#data_ea_"+num).text(String(backlog_doc.event_action).replace('_','-'));
+        $("#data_ec_"+num).text(String(backlog_doc.event_category).replace(new RegExp("_", "g"),'-'));
+        $("#data_ea_"+num).text(String(backlog_doc.event_action).replace(new RegExp("_", "g"),'-'));
         $("#data_es_"+num).text(backlog_doc.event_service);
         $("#data_ed_"+num).text(backlog_doc.event_device);
-        $("#data_el_"+num).text(backlog_doc.event_label);
+        $("#data_el_"+num).text(String(backlog_doc.event_label).replace(new RegExp(",", "g"), ' , '));
         if(backlog_doc.fe_tick_state){
             $("#fe_tick_status_"+num).prop('checked', true);
 
@@ -343,11 +345,11 @@ $(function(){
         // $('.imageshow_wrapper').tooltip();
         $('.image_wrapper').tooltip();
         $('.eventinfo_wrapper').tooltip();
-        $("#data_ec_"+num).text(String(approved_doc.event_category).replace('_','-'));
-        $("#data_ea_"+num).text(String(approved_doc.event_action).replace('_','-'));
+        $("#data_ec_"+num).text(String(approved_doc.event_category).replace(new RegExp("_", "g"),'-'));
+        $("#data_ea_"+num).text(String(approved_doc.event_action).replace(new RegExp("_", "g"),'-'));
         $("#data_es_"+num).text(approved_doc.event_service);
         $("#data_ed_"+num).text(approved_doc.event_device);
-        $("#data_el_"+num).text(approved_doc.event_label);
+        $("#data_el_"+num).text(String(approved_doc.event_label).replace(new RegExp(",", "g"), ' , '));
 
     }
 
@@ -663,10 +665,10 @@ $(function(){
                 url: "/trackeasy/edit/",
                 data: {
                     'name': 'editEvent', 
-                    'event_category': $('#editeventCategory')[0].selectize.items[0].trim().replace('-','_'),
-                    'event_action': $('#editeventAction')[0].selectize.items[0].trim().replace('-','_'),
+                    'event_category': $('#editeventCategory')[0].selectize.items[0].trim().replace(new RegExp("-", "g"),'_'),
+                    'event_action': $('#editeventAction')[0].selectize.items[0].trim().replace(new RegExp("-", "g"),'_'),
                     'event_service': var_temp_edit_event_service,
-                    'event_label': $('#editeventLabel')[0].selectize.items.join(',').trim().replace('-','_'),
+                    'event_label': $('#editeventLabel')[0].selectize.items.join(',').trim().replace(new RegExp("-", "g"),'_'),
                     'event_device': var_temp_edit_event_device,
                     'id':id
                 },

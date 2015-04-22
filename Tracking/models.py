@@ -9,12 +9,12 @@ class tracking_event_comments(EmbeddedDocument):
     comment_datetime = DateTimeField(required=True, default=datetime.now)
     comment = StringField(required=False)
 
-class tracking_event(Document):
+class tracking_events_log(Document):
 	event_category = StringField(required=True)
 	event_action = StringField(required=True)
 	event_service = StringField(required=True)
 	event_device = StringField(required=True)
-	event_label = StringField(required=True)
+	event_label = ListField(StringField(required=True))
 	event_image_path = StringField(required=False)
 	fe_tick_state = BooleanField(required=True, default=False)
 	pa_tick_state = BooleanField(required=True, default=False)

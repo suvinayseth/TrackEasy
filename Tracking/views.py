@@ -83,18 +83,18 @@ def track_app(request):
 			data={}
 			data['is_duplicate']=1
 
-			if(len(tracking_event.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']]))==0 ):
-				doc_te = tracking_event.objects.create(
+			if(len(tracking_events_log.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']]))==0 ):
+				doc_te = tracking_events_log.objects.create(
 					event_category = request.POST['event_category'],
 					event_action = request.POST['event_action'],
 					event_service = service_map_dict[request.POST['event_service']],
-					event_label = request.POST['event_label'],
+					event_label = [i.strip() for i in request.POST['event_label'].split(',')],
 					event_device = device_map_dict[request.POST['event_device']]
 					)
 				doc_te.save()
 				data['is_duplicate']=0
 
-			elif(len(tracking_event.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']]))>0):
+			elif(len(tracking_events_log.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']]))>0):
 				data['is_duplicate']=1
 
 			return HttpResponse(json.dumps(data), content_type="application/json")
@@ -111,28 +111,28 @@ def track_app(request):
 			print service_map_dict[request.GET['service']] != 'all' , device_map_dict[request.GET['device']] != 'all',service_map_dict[request.GET['service']] == 'all',device_map_dict[request.GET['device']] == 'all'
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
 				print 'if 1'
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']]).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']]).order_by('id'):
 					if(var_te['fe_tick_state']==True and var_te['pa_tick_state']==True):
 						data['approved'].append(var_te.to_json())
 					else:
 						data['backlog'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] != 'all'):
 				print 'if 2'
-				for var_te in tracking_event.objects(event_device=device_map_dict[request.GET['device']]).order_by('id'):
+				for var_te in tracking_events_log.objects(event_device=device_map_dict[request.GET['device']]).order_by('id'):
 					if(var_te['fe_tick_state']==True and var_te['pa_tick_state']==True):
 						data['approved'].append(var_te.to_json())
 					else:
 						data['backlog'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] == 'all'):
 				print 'if 3'
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']]).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']]).order_by('id'):
 					if(var_te['fe_tick_state']==True and var_te['pa_tick_state']==True):
 						data['approved'].append(var_te.to_json())
 					else:
 						data['backlog'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
 				print 'if 4'
-				for var_te in tracking_event.objects().order_by('id'):
+				for var_te in tracking_events_log.objects().order_by('id'):
 					if(var_te['fe_tick_state']==True and var_te['pa_tick_state']==True):
 						data['approved'].append(var_te.to_json())
 					else:
@@ -159,7 +159,7 @@ def edit(request):
 	# print request.POST['name']
 	if(request.is_ajax() and request.POST['name']=='fe_confirm'):
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_event.objects.get(id=doc_id)
+		doc = tracking_events_log.objects.get(id=doc_id)
 		if(request.POST['status']=='true'):
 			status = True
 		elif(request.POST['status']=='false'):
@@ -170,7 +170,7 @@ def edit(request):
 
 	elif(request.is_ajax() and request.POST['name']=='pa_confirm'):
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_event.objects.get(id=doc_id)
+		doc = tracking_events_log.objects.get(id=doc_id)
 		doc.pa_tick_state = True
 		doc.pa_checked_date = datetime.datetime.now
 		doc.save()
@@ -179,7 +179,7 @@ def edit(request):
 		data={}
 		data['is_duplication']=1
 		flag=0
-		var_objects = tracking_event.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']])
+		var_objects = tracking_events_log.objects(event_category = request.POST['event_category'], event_action = request.POST['event_action'], event_service = service_map_dict[request.POST['event_service']], event_device = device_map_dict[request.POST['event_device']])
 		if len(var_objects)==0:
 			flag=1
 		elif len(var_objects)==1 and var_objects[0].id == request.POST['id']:
@@ -189,13 +189,13 @@ def edit(request):
 
 		if flag:
 			doc_id = bson.objectid.ObjectId(request.POST['id'])
-			doc = tracking_event.objects.get(id=doc_id)
+			doc = tracking_events_log.objects.get(id=doc_id)
 			doc.event_category = request.POST['event_category']
 			doc.event_action = request.POST['event_action']
 			print 'post request from edit',request.POST['event_service']
 			doc.event_service = service_map_dict[request.POST['event_service']]
 			doc.event_device = device_map_dict[request.POST['event_device']]
-			doc.event_label = request.POST['event_label']
+			doc.event_label = [i.strip() for i in request.POST['event_label'].split(',')]
 			doc.event_creation_date = datetime.datetime.now
 			doc.save()
 			data['is_duplication']=0
@@ -207,15 +207,15 @@ def edit(request):
 	elif(request.is_ajax() and request.POST['name']=='deleteEvent'):
 		# print 'trugn to delete'
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_event.objects.get(id=doc_id)
+		doc = tracking_events_log.objects.get(id=doc_id)
 		if(doc.event_image_path!=None):
 			os.remove(doc.event_image_path)
 		doc.delete()
 
 	elif(request.is_ajax() and request.POST['name']=='duplicateEvent'):
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_event.objects.get(id=doc_id)
-		duplicate_doc = tracking_event.objects.create(
+		doc = tracking_events_log.objects.get(id=doc_id)
+		duplicate_doc = tracking_events_log.objects.create(
 			event_category = doc['event_category'],
 			event_action = doc['event_action'],
 			event_service = doc['event_service'],
@@ -236,7 +236,7 @@ def edit(request):
 				fh = open(event_image_filepath, "wb")
 				fh.write(var_image)
 				fh.close()
-				doc = tracking_event.objects.get(id=doc_id)
+				doc = tracking_events_log.objects.get(id=doc_id)
 				doc.event_image_path = event_image_filepath
 				doc.save()
 				return redirect('/trackeasy/')
@@ -247,12 +247,10 @@ def edit(request):
 		print 'print getting event info',request.GET
 		form = UploadForm(request.POST, request.FILES)
 		doc_id = bson.objectid.ObjectId(request.GET['id'])
-		doc = tracking_event.objects.get(id=doc_id) 
+		doc = tracking_events_log.objects.get(id=doc_id) 
 		fe_date = doc.fe_checked_date
 		pa_date = doc.pa_checked_date
 		print 'dates', fe_date, pa_date
-
-
 
 	# print data
 	return render_to_response('Tracking/trackeasy.html')
@@ -267,7 +265,7 @@ def get_info(request):
 		if (request.GET['name']=='geteventinfo'):
 			print 'print getting event info',request.GET
 			doc_id = bson.objectid.ObjectId(request.GET['id'])
-			doc = tracking_event.objects.get(id=doc_id) 
+			doc = tracking_events_log.objects.get(id=doc_id) 
 			fe_date = str(doc.fe_checked_date)
 			pa_date = str(doc.pa_checked_date)
 			creation_date = str(doc.event_creation_date)
@@ -290,7 +288,7 @@ def get_info(request):
 		if (request.POST['name']=='addComment'):
 			print 'print adding Comment',request.POST
 			doc_id = bson.objectid.ObjectId(request.POST['id'])
-			doc = tracking_event.objects.get(id=doc_id)
+			doc = tracking_events_log.objects.get(id=doc_id)
 			comment_doc = tracking_event_comments(author=request.POST['author'],comment=request.POST['comment']) 
 			doc.event_comments.append(comment_doc)
 			doc.save()
@@ -310,19 +308,19 @@ def mismatch_app(request):
 			print 'this is GET request AJAX',request.GET
 			data['match']=[]
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==True:
 						data['match'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] != 'all'):
-				for var_te in tracking_event.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==True:
 						data['match'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] == 'all'):
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==True:
 						data['match'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
-				for var_te in tracking_event.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==True:
 						data['match'].append(var_te.to_json())
 			print json.dumps(data)
@@ -333,19 +331,19 @@ def mismatch_app(request):
 			print 'this is GET request AJAX',request.GET
 			data['mismatch']=[]
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==False:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] != 'all'):
-				for var_te in tracking_event.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==False:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] == 'all'):
-				for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==False:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
-				for var_te in tracking_event.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
+				for var_te in tracking_events_log.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
 					if var_te['has_mongo_match']==False:
 						data['mismatch'].append(var_te.to_json())
 			print json.dumps(data)
@@ -385,7 +383,6 @@ def mismatch_app(request):
 							trackeasy_coll.update({'_id':var_te['_id']},{"$set":{'has_mongo_match':False}},upsert=False)
 							print 'mismatch'
 						ticker+=1
-				
 			elif(service_map_dict[request.POST['service']] == 'all' and device_map_dict[request.POST['device']] != 'all'):
 				trackeasy_overall_data = trackeasy_coll.find({'fe_tick_state':True,'pa_tick_state':True, 'event_device':device_map_dict[request.POST['device']]})
 				trackeasy_distinct_categories = trackeasy_overall_data.distinct('event_category')
@@ -528,7 +525,7 @@ def misbehave_app(request):
 					var_analytics_coll = analytics_con[analytics_db][var_category]
 					print 'category\'s collection loaded'
 					ticker=0
-					for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
+					for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
 						print ticker+1
 						count_TR1 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid1, '$lte': tutcoid1}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
 						count_TR2 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid2, '$lte': tutcoid2}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
@@ -551,7 +548,7 @@ def misbehave_app(request):
 					var_analytics_coll = analytics_con[analytics_db][var_category]
 					print 'category\'s collection loaded'
 					ticker=0
-					for var_te in tracking_event.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
+					for var_te in tracking_events_log.objects(event_device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
 						print ticker+1
 						count_TR1 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid1, '$lte': tutcoid1}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
 						count_TR2 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid2, '$lte': tutcoid2}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
@@ -574,7 +571,7 @@ def misbehave_app(request):
 					var_analytics_coll = analytics_con[analytics_db][var_category]
 					print 'category\'s collection loaded'
 					ticker=0
-					for var_te in tracking_event.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
+					for var_te in tracking_events_log.objects(event_service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
 						print ticker+1
 						count_TR1 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid1, '$lte': tutcoid1}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
 						count_TR2 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid2, '$lte': tutcoid2}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
@@ -597,7 +594,7 @@ def misbehave_app(request):
 					var_analytics_coll = analytics_con[analytics_db][var_category]
 					print 'category\'s collection loaded'
 					ticker=0
-					for var_te in tracking_event.objects(fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
+					for var_te in tracking_events_log.objects(fe_tick_state=True, pa_tick_state=True,event_category=var_category).order_by('id'):
 						print ticker+1
 						count_TR1 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid1, '$lte': tutcoid1}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
 						count_TR2 = len(var_analytics_coll.find({'_id': {'$gte': yutcoid2, '$lte': tutcoid2}, 'service': var_te['event_service'], 'device':var_te['event_device'], 'action':var_te['event_action']}).distinct('uid'))
