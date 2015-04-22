@@ -4,24 +4,29 @@ from mongoengine import *
 from datetime import datetime
 # Create your models here.
 
-class tracking_event_comments(EmbeddedDocument):
+class tracking_events_comments(EmbeddedDocument):
     author = StringField(required=False)
     comment_datetime = DateTimeField(required=True, default=datetime.now)
     comment = StringField(required=False)
 
+
+class tracking_events(EmbeddedDocument):
+	category = StringField(required=True)
+	action = StringField(required=True)
+	service = StringField(required=True)
+	device = StringField(required=True)
+	label = ListField(StringField(required=True))
+	
+
 class tracking_events_log(Document):
-	event_category = StringField(required=True)
-	event_action = StringField(required=True)
-	event_service = StringField(required=True)
-	event_device = StringField(required=True)
-	event_label = ListField(StringField(required=True))
-	event_image_path = StringField(required=False)
+	event = EmbeddedDocumentField(tracking_events)
+	event_creation_date = DateTimeField(required=True, default=datetime.now)
 	fe_tick_state = BooleanField(required=True, default=False)
 	pa_tick_state = BooleanField(required=True, default=False)
-	event_creation_date = DateTimeField(required=True, default=datetime.now)
-	fe_checked_date = DateTimeField(required=False)
+	fe_checked_date_latest = DateTimeField(required=False)
 	pa_checked_date = DateTimeField(required=False)
-	event_comments = ListField(EmbeddedDocumentField(tracking_event_comments))
+	event_image_path = StringField(required=False)
+	event_comments = ListField(EmbeddedDocumentField(tracking_events_comments))
 	has_mongo_match = BooleanField(required=True, default=False)
 
 class suggestion_data(Document):
