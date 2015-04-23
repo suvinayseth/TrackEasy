@@ -27,11 +27,29 @@ class tracking_events_log(Document):
 	pa_checked_date = DateTimeField(required=False)
 	event_image_path = StringField(required=False)
 	event_comments = ListField(EmbeddedDocumentField(tracking_events_comments))
-	has_mongo_match = BooleanField(required=True, default=False)
+	aux_mongo_match = BooleanField(required=False)
+	aux_total_count = IntField(required=False)
+	aux_unique_count = IntField(required=False)
 
 class suggestion_data(Document):
 	actions = ListField(StringField(required=True))
 	categories = ListField(StringField(required=True))
 	labels = ListField(StringField(required=True))
 	base_labels = ListField(StringField(required=True))
+
+class tracking_events_audit(Document):
+	event = EmbeddedDocumentField(tracking_events)
+	has_mongo_match = BooleanField(required=True, default=False)
+
+class tracking_events_alert(Document):
+	event = EmbeddedDocumentField(tracking_events)
+	total_count = IntField(required=True,default=0)
+	unique_count = IntField(required=True)
+	date = DateTimeField(required=True)
+
+class TrackEasy_update_details(Document):
+	suggestion_data = DateTimeField(required=True)
+	tracking_events_audit = DateTimeField(required=True)
+	tracking_events_alert = DateTimeField(required=True)
+
 

@@ -181,11 +181,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(behavior_data.event_category).replace('_','-'));
-        $("#data_ea_"+num).text(String(behavior_data.event_action).replace('_','-'));
-        $("#data_es_"+num).text(behavior_data.event_service);
-        $("#data_ed_"+num).text(behavior_data.event_device);
-        $("#data_el_"+num).text(behavior_data.event_label);
+        $("#data_ec_"+num).text(String(behavior_data.event.category).replace('_','-'));
+        $("#data_ea_"+num).text(String(behavior_data.event.action).replace('_','-'));
+        $("#data_es_"+num).text(behavior_data.event.service);
+        $("#data_ed_"+num).text(behavior_data.event.device);
+        $("#data_el_"+num).text(behavior_data.event.label);
         $("#data_TR1_"+num).text(behavior_data.count_TR1);
         $("#data_TR2_"+num).text(behavior_data.count_TR2);
         if(behavior_data.count_TR2-behavior_data.count_TR1>0){
@@ -218,7 +218,7 @@ $(function(){
                 type: "GET",
                 url: "/trackeasy/misbehave/",
                 data: {
-                    'name': 'updateData',
+                    'name': 'get_updated_data',
                     'service': var_temp_event_service,
                     'device': var_temp_event_device,
                     'TR1_fromDate': TR1FromDate,

@@ -76,7 +76,7 @@ $(function(){
             type: "GET",
             url: "/trackeasy/mismatch/",
             data: {
-                'name': 'get_match_data',
+                'name': 'get_latest_match_data',
                 'service': var_service,
                 'device': var_device
             },
@@ -106,7 +106,7 @@ $(function(){
             type: "GET",
             url: "/trackeasy/mismatch/",
             data: {
-                'name': 'get_mismatch_data',
+                'name': 'get_latest_mismatch_data',
                 'service': var_service,
                 'device': var_device
             },
@@ -221,11 +221,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(mismatch_app_doc.event_category).replace('_','-'));
-        $("#data_ea_"+num).text(String(mismatch_app_doc.event_action).replace('_','-'));
-        $("#data_es_"+num).text(mismatch_app_doc.event_service);
-        $("#data_ed_"+num).text(mismatch_app_doc.event_device);
-        $("#data_el_"+num).text(String(mismatch_app_doc.event_label).replace(new RegExp(",", "g"), ' , '));
+        $("#data_ec_"+num).text(String(mismatch_app_doc.event.category).replace('_','-'));
+        $("#data_ea_"+num).text(String(mismatch_app_doc.event.action).replace('_','-'));
+        $("#data_es_"+num).text(mismatch_app_doc.event.service);
+        $("#data_ed_"+num).text(mismatch_app_doc.event.device);
+        $("#data_el_"+num).text(String(mismatch_app_doc.event.label).replace(new RegExp(",", "g"), ' , '));
 
     }
 
@@ -275,6 +275,7 @@ $(function(){
                 },
                 success: function(data) {
                     console.log("Ajax: POST success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
+                    // console.log(data)
                     if(localStorage.getItem("matchOrMismatch")=='match'){
                         showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
                     }
