@@ -5,9 +5,9 @@ from datetime import datetime
 # Create your models here.
 
 class tracking_events_comments(EmbeddedDocument):
-    author = StringField(required=False)
+    author = StringField(required=True)
     comment_datetime = DateTimeField(required=True, default=datetime.now)
-    comment = StringField(required=False)
+    comment = StringField(required=True)
 
 
 class tracking_events(EmbeddedDocument):
@@ -27,9 +27,9 @@ class tracking_events_log(Document):
 	pa_checked_date = DateTimeField(required=False)
 	event_image_path = StringField(required=False)
 	event_comments = ListField(EmbeddedDocumentField(tracking_events_comments))
-	aux_mongo_match = BooleanField(required=False)
-	aux_total_count = IntField(required=False)
-	aux_unique_count = IntField(required=False)
+	aux_mongo_match = BooleanField(required=True,default=False)
+	aux_total_count = IntField(required=True,default=0)
+	aux_unique_count = IntField(required=True,default=0)
 
 class suggestion_data(Document):
 	actions = ListField(StringField(required=True))
@@ -44,7 +44,7 @@ class tracking_events_audit(Document):
 class tracking_events_alert(Document):
 	event = EmbeddedDocumentField(tracking_events)
 	total_count = IntField(required=True,default=0)
-	unique_count = IntField(required=True)
+	unique_count = IntField(required=True, default=0)
 	date = DateTimeField(required=True)
 
 class TrackEasy_update_details(Document):
