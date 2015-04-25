@@ -198,6 +198,76 @@ $(function(){
 
     }
 
+    $('#getList').click(function(event) {
+        console.log("inside #updateList function");
+        event.preventDefault();
+        var TR1FromDate = $('#dp1').val();
+        var TR1ToDate = $('#dp2').val();
+        var TR2FromDate = $('#dp3').val();
+        var TR2ToDate = $('#dp4').val();
+        var var_temp_event_service = $("#dLabel").text().slice(0,-1);
+        var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
+        if($('#dp1').val() && $('#dp2').val() && $('#dp3').val() && $('#dp4').val()){
+            if(moment(TR2ToDate,'DD-MM-YYYY')>=moment(TR2FromDate,'DD-MM-YYYY') && 
+                moment(TR2FromDate,'DD-MM-YYYY')>=moment(TR1ToDate,'DD-MM-YYYY') && 
+                moment(TR1ToDate,'DD-MM-YYYY')>=moment(TR1FromDate,'DD-MM-YYYY')
+            ){
+
+                $("#overlay").show()
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/misbehave/",
+                    data: {
+                        'name': 'get_updated_data',
+                        'service': var_temp_event_service,
+                        'device': var_temp_event_device,
+                        'TR1_fromDate': TR1FromDate,
+                        'TR1_toDate': TR1ToDate,
+                        'TR2_fromDate': TR2FromDate,
+                        'TR2_toDate': TR2ToDate,
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
+                        console.log(data)
+                        $("#behavior_list").html("");
+                        data.behavior_data.sort(function(x,y){
+                                            var perc_x = 0
+                                            var prec_y = 0
+                                            if (x.count_TR1==0 && y.count_TR2!=0){
+                                                return 0 - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
+                                            }
+                                            else if(x.count_TR1!=0 && y.count_TR2==0){
+                                                return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - 0
+                                            }
+                                            else if(x.count_TR1==0 && y.count_TR2==0){
+                                                return 0
+                                            }
+                                            else{
+                                                return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
+                                            }
+                                            
+                                            })
+                        for (var i = data.behavior_data.length - 1; i >= 0; i--) {
+                            createList(data.behavior_data[i]);
+                        };
+                        $("#overlay").hide()
+                    },
+                    error: function(err) {
+                        console.log("Ajax: GET error: ", err);
+                    }
+                })
+            }
+            else{
+                alert("Time ranges must be in order and no overlaps are allowed. Time range 2 is required to be in future of Time range 1")
+                $("#overlay").hide()
+            }
+        }
+        else{
+            alert("Set date-durations first, leave no date blank")
+            $("#overlay").hide()
+        }
+    });
+    
     $('#updateList').click(function(event) {
         $("#overlay").show()
         console.log("inside #updateList function");
@@ -208,62 +278,65 @@ $(function(){
         var TR2ToDate = $('#dp4').val();
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
+        if($('#dp1').val() && $('#dp2').val() && $('#dp3').val() && $('#dp4').val()){
+            if(moment(TR2ToDate,'DD-MM-YYYY')>=moment(TR2FromDate,'DD-MM-YYYY') && 
+                moment(TR2FromDate,'DD-MM-YYYY')>=moment(TR1ToDate,'DD-MM-YYYY') && 
+                moment(TR1ToDate,'DD-MM-YYYY')>=moment(TR1FromDate,'DD-MM-YYYY')
+            ){
 
-        if(moment(TR2ToDate,'DD-MM-YYYY')>=moment(TR2FromDate,'DD-MM-YYYY') && 
-            moment(TR2FromDate,'DD-MM-YYYY')>=moment(TR1ToDate,'DD-MM-YYYY') && 
-            moment(TR1ToDate,'DD-MM-YYYY')>=moment(TR1FromDate,'DD-MM-YYYY')
-        ){
-
-            $.ajax({
-                type: "GET",
-                url: "/trackeasy/misbehave/",
-                data: {
-                    'name': 'get_updated_data',
-                    'service': var_temp_event_service,
-                    'device': var_temp_event_device,
-                    'TR1_fromDate': TR1FromDate,
-                    'TR1_toDate': TR1ToDate,
-                    'TR2_fromDate': TR2FromDate,
-                    'TR2_toDate': TR2ToDate,
-                },
-                success: function(data) {
-                    console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
-                    console.log(data)
-                    $("#behavior_list").html("");
-                    data.behavior_data.sort(function(x,y){
-                                        var perc_x = 0
-                                        var prec_y = 0
-                                        if (x.count_TR1==0 && y.count_TR2!=0){
-                                            return 0 - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
-                                        }
-                                        else if(x.count_TR1!=0 && y.count_TR2==0){
-                                            return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - 0
-                                        }
-                                        else if(x.count_TR1==0 && y.count_TR2==0){
-                                            return 0
-                                        }
-                                        else{
-                                            return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
-                                        }
-                                        
-                                        })
-                    for (var i = data.behavior_data.length - 1; i >= 0; i--) {
-                        createList(data.behavior_data[i]);
-                    };
-                    $("#overlay").hide()
-                },
-                error: function(err) {
-                    console.log("Ajax: GET error: ", err);
-                }
-            })
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/misbehave/",
+                    data: {
+                        'name': 'get_updated_data',
+                        'service': var_temp_event_service,
+                        'device': var_temp_event_device,
+                        'TR1_fromDate': TR1FromDate,
+                        'TR1_toDate': TR1ToDate,
+                        'TR2_fromDate': TR2FromDate,
+                        'TR2_toDate': TR2ToDate,
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
+                        console.log(data)
+                        $("#behavior_list").html("");
+                        data.behavior_data.sort(function(x,y){
+                                            var perc_x = 0
+                                            var prec_y = 0
+                                            if (x.count_TR1==0 && y.count_TR2!=0){
+                                                return 0 - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
+                                            }
+                                            else if(x.count_TR1!=0 && y.count_TR2==0){
+                                                return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - 0
+                                            }
+                                            else if(x.count_TR1==0 && y.count_TR2==0){
+                                                return 0
+                                            }
+                                            else{
+                                                return Math.abs(100*(x.count_TR2-x.count_TR1)/x.count_TR1) - Math.abs(100*(y.count_TR2-y.count_TR1)/y.count_TR1)
+                                            }
+                                            
+                                            })
+                        for (var i = data.behavior_data.length - 1; i >= 0; i--) {
+                            createList(data.behavior_data[i]);
+                        };
+                        $("#overlay").hide()
+                    },
+                    error: function(err) {
+                        console.log("Ajax: GET error: ", err);
+                    }
+                })
+            }
+            else{
+                alert("Time ranges must be in order and no overlaps are allowed. Time range 2 is required to be in future of Time range 1")
+                $("#overlay").hide()
+            }
         }
         else{
-            alert("Time ranges must be in order and no overlaps are allowed. Time range 2 is required to be in future of Time range 1")
+            alert("Set date-durations first, leave no date blank")
             $("#overlay").hide()
         }
-        
     });
-
 
     $(document).on('click', '.imageupload', function (){
         console.log(" upload Event Image clicked");

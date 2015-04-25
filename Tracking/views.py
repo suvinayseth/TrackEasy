@@ -168,7 +168,7 @@ def edit(request):
 		elif(request.POST['status']=='false'):
 			status=False
 		doc.fe_tick_state = status
-		doc.fe_checked_date = datetime.datetime.now
+		doc.fe_checked_date_latest = datetime.datetime.now
 		doc.save()
 
 	elif(request.is_ajax() and request.POST['name']=='pa_confirm'):
@@ -254,7 +254,7 @@ def edit(request):
 		form = UploadForm(request.POST, request.FILES)
 		doc_id = bson.objectid.ObjectId(request.GET['id'])
 		doc = tracking_events_log.objects.get(id=doc_id) 
-		fe_date = doc.fe_checked_date
+		fe_date = doc.fe_checked_date_latest
 		pa_date = doc.pa_checked_date
 		print 'dates', fe_date, pa_date
 
@@ -272,7 +272,7 @@ def get_info(request):
 			print 'print getting event info',request.GET
 			doc_id = bson.objectid.ObjectId(request.GET['id'])
 			doc = tracking_events_log.objects.get(id=doc_id) 
-			fe_date = str(doc.fe_checked_date)
+			fe_date = str(doc.fe_checked_date_latest)
 			pa_date = str(doc.pa_checked_date)
 			creation_date = str(doc.event_creation_date)
 			print 'dates', fe_date, pa_date
@@ -309,7 +309,7 @@ def mismatch_app(request):
 	print "Inside mismatch app"
 
 	if request.is_ajax() and request.GET:
-		if request.GET['name']=='get_latest_match_data':
+		if request.GET['name']=='get_latest_match_audit_data':
 			data={}
 			print 'this is GET request AJAX',request.GET
 			data['match']=[]
@@ -332,7 +332,7 @@ def mismatch_app(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 
-		if request.GET['name']=='get_latest_mismatch_data':
+		if request.GET['name']=='get_latest_mismatch_audit_data':
 			data={}
 			print 'this is GET request AJAX',request.GET
 			data['mismatch']=[]
@@ -359,33 +359,47 @@ def mismatch_app(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 		
-		if request.GET['name']=='get_updated_audit_data':
+		if request.GET['name']=='get_audit_data':
 			data={}
 			print 'this is GET request AJAX',request.GET
 			data['match']=[]
+			data['mismatch']=[]
+
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
 				for var_te in tracking_events_log.objects(event__service=service_map_dict[request.GET['service']],event__device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match :
-						data['match'].append(var_te.to_json())
-					elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False :
+					try:
+						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match :
+							data['match'].append(var_te.to_json())
+						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False :
+							data['mismatch'].append(var_te.to_json())
+					except:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] != 'all'):
 				for var_te in tracking_events_log.objects(event__device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-						data['match'].append(var_te.to_json())
-					elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+					try:
+						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
+							data['match'].append(var_te.to_json())
+						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+							data['mismatch'].append(var_te.to_json())
+					except:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] == 'all'):
 				for var_te in tracking_events_log.objects(event__service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-						data['match'].append(var_te.to_json())
-					elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+					try:
+						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
+							data['match'].append(var_te.to_json())
+						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+							data['mismatch'].append(var_te.to_json())
+					except:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
 				for var_te in tracking_events_log.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-						data['match'].append(var_te.to_json())
-					elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+					try:
+						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
+							data['match'].append(var_te.to_json())
+						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
+							data['mismatch'].append(var_te.to_json())
+					except:
 						data['mismatch'].append(var_te.to_json())
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")

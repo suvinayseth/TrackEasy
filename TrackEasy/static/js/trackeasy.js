@@ -68,7 +68,6 @@ $(function(){
     
 
     $('#addNewEvent').click(function(event) {
-        $("#overlay").show()
         console.log("inside add new event function");
         event.preventDefault();
         // TODO : validate entries
@@ -82,6 +81,7 @@ $(function(){
                 alert('Leave no field blank')
             }
             else{
+                $("#overlay").show()
                 $.ajax({
                     type: "POST",
                     url: "/trackeasy/",
@@ -99,7 +99,7 @@ $(function(){
                         }
                         else{
                             console.log(" ajax : new event POST Success");
-                            console.log(data)
+                            // console.log(data)
                             $('#myModal').modal('hide');
                             $("#backlog_docs").html("");
                             $("#approved_docs").html("");
@@ -383,20 +383,20 @@ $(function(){
                 console.log("Ajax: GET suggestion data success");
                 console.log(data)
                 
+
+
                 var selectize = $("#eventCategory")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()
                 for (var i = data.categories.length - 1; i >= 0; i--) {
                     selectize.addOption({text:data.categories[i],value:data.categories[i]})
                 };
-                
                 selectize = $("#eventAction")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()
                 for (var i = data.actions.length - 1; i >= 0; i--) {
                     selectize.addOption({text:data.actions[i],value:data.actions[i]})
                 };
-                
                 selectize = $("#eventLabel")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()
@@ -407,13 +407,15 @@ $(function(){
                 for (var i = 0; i < data.base_labels.length; i++) {
                     selectize.addItem(data.base_labels[i],'silent')
                 };
-                
+
                 $("#overlay").hide()
             },
             error: function(err) {
                 console.log("Ajax: Get error: ", err);
                 $("#overlay").hide()
             }
+        
+
         })
         $('#addModalService').html("");
         $('#addModalService').append("\
@@ -533,8 +535,6 @@ $(function(){
 
 
 
-
-
     $(document).on('click', '.edit', function (){
         console.log(" edit Event clicked");
         var id = $(this).attr('id');
@@ -556,6 +556,7 @@ $(function(){
                 console.log("Ajax: GET suggestion data success");
                 console.log(data)
                 
+
                 var selectize = $("#editeventCategory")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()
@@ -564,8 +565,6 @@ $(function(){
                 };
                 selectize.addOption({text:$("#data_ec_" + id).text(),value:$("#data_ec_" + id).text()})
                 selectize.addItem($("#data_ec_" + id).text(),'silent')
-
-                
                 selectize = $("#editeventAction")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()
@@ -574,9 +573,6 @@ $(function(){
                 };
                 selectize.addOption({text:$("#data_ea_" + id).text(),value:$("#data_ea_" + id).text()})
                 selectize.addItem($("#data_ea_" + id).text(),'silent')
-
-                
-
                 selectize = $("#editeventLabel")[0].selectize;
                 selectize.clearOptions()
                 selectize.clear()

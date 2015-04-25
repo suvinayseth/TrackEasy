@@ -30,24 +30,33 @@ $(function(){
         $("#deviceLabel").text(localStorage.getItem("eventsDisplayDevice")+'▼');
     }
 
-    if(localStorage.getItem("matchOrMismatch") == null){
-        localStorage.setItem("matchOrMismatch", "match");
-    }
+    // if(localStorage.getItem("matchOrMismatch") == null){
+    //     localStorage.setItem("matchOrMismatch", "mismatch");
+    //     $("#getMismatchData_li").addClass('active')
+    //     $("#getMatchData_li").removeClass('active')
+    //     showMismatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
+    // }
+    // else if(localStorage.getItem("matchOrMismatch") == 'mismatch'){
+    //     $("#getMismatchData_li").addClass('active')
+    //     $("#getMatchData_li").removeClass('active')
+    //     showMismatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
+    // }
+    // else{
+    //     $("#getMatchData_li").addClass('active')
+    //     $("#getMismatchData_li").removeClass('active')
+    //     showMmatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
+    // }
 
     $('.service_list').click(function(event) {
         console.log("service selected");
         // var var_service = $(this).text();
         // var var_device = $("#deviceLabel").text().slice(0,-1);
         event.preventDefault();
-        // $("#mismatch_list").html("<div></div>");
-        $("#mismatch_list").html("");
         $("#dLabel").text($(this).text()+'▼');
-        // if(localStorage.getItem("matchOrMismatch") == 'match'){
-        //     showMatchDataByServiceAndDevice(var_service,var_device);
-        // }
-        // else{
-        //     showMismatchDataByServiceAndDevice(var_service,var_device);
-        // }
+        $("#mismatch_list").html("");
+        $("#getMatchData_li").removeClass('active')
+        $("#getMismatchData_li").removeClass('active')
+        
     });
 
     $('.device_list').click(function(event) {
@@ -55,15 +64,11 @@ $(function(){
         // var var_service =$("#dLabel").text().slice(0,-1);
         // var var_device = $(this).text();
         event.preventDefault();
-        // $("#mismatch_list").html("<div></div>");
-        $("#mismatch_list").html("");
         $("#deviceLabel").text($(this).text()+'▼');
-        // if(localStorage.getItem("matchOrMismatch") == 'match'){
-        //     showMatchDataByServiceAndDevice(var_service,var_device);
-        // }
-        // else{
-        //     showMismatchDataByServiceAndDevice(var_service,var_device);
-        // }
+        $("#mismatch_list").html("");
+        $("#getMatchData_li").removeClass('active')
+        $("#getMismatchData_li").removeClass('active')
+        
     });
 
 
@@ -76,7 +81,7 @@ $(function(){
             type: "GET",
             url: "/trackeasy/mismatch/",
             data: {
-                'name': 'get_latest_match_data',
+                'name': 'get_audit_data',
                 'service': var_service,
                 'device': var_device
             },
@@ -90,9 +95,26 @@ $(function(){
                     createList(jQuery.parseJSON(data.match[i]));
                 };
                 $("#overlay").hide()
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/mismatch/",
+                    data: {
+                        'name': 'get_mismatch_update_details',
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                        console.log(data)
+                        alert("data latest to "+"today morning")
+                        
+                    },
+                    error: function(err) {
+                        console.log("Ajax: Get error: ", err);
+                    }
+                })
             },
             error: function(err) {
                 console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
             }
         })
     }
@@ -106,7 +128,7 @@ $(function(){
             type: "GET",
             url: "/trackeasy/mismatch/",
             data: {
-                'name': 'get_latest_mismatch_data',
+                'name': 'get_audit_data',
                 'service': var_service,
                 'device': var_device
             },
@@ -120,6 +142,22 @@ $(function(){
                     createList(jQuery.parseJSON(data.mismatch[i]));
                 };
                 $("#overlay").hide()
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/mismatch/",
+                    data: {
+                        'name': 'get_mismatch_update_details',
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                        console.log(data)
+                        alert("data latest to "+"today morning")
+                        
+                    },
+                    error: function(err) {
+                        console.log("Ajax: Get error: ", err);
+                    }
+                })
             },
             error: function(err) {
                 console.log("Ajax: Get error: ", err);
@@ -127,11 +165,94 @@ $(function(){
         })
     }
 
-
-
-    // $("#getMatchData_li").addClass('active')
-    // showMatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
-
+    var showLatestMatchDataByServiceAndDevice = function(var_service, var_device) {
+        console.log("inside showMatchDataByServiceAndDevice function with service",var_service, var_device);
+        $("#overlay").show()
+        $.ajax({
+            type: "GET",
+            url: "/trackeasy/mismatch/",
+            data: {
+                'name': 'get_latest_match_audit_data',
+                'service': var_service,
+                'device': var_device
+            },
+            success: function(data) {
+                console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                console.log(data)
+                $("#getMatchData_li").addClass('active')
+                $("#getMismatchData_li").removeClass('active')
+                $("#mismatch_list").html("");
+                for (var i = data.match.length - 1; i >= 0; i--) {
+                    createList(jQuery.parseJSON(data.match[i]));
+                };
+                $("#overlay").hide()
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/mismatch/",
+                    data: {
+                        'name': 'get_mismatch_update_details',
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                        console.log(data)
+                        alert("data latest to "+"now")
+                        
+                    },
+                    error: function(err) {
+                        console.log("Ajax: Get error: ", err);
+                    }
+                })
+            },
+            error: function(err) {
+                console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
+            }
+        })
+    }
+    
+    var showLatestMismatchDataByServiceAndDevice = function(var_service, var_device) {
+        console.log("inside showMismatchDataByServiceAndDevice function with service",var_service, var_device);
+        $("#overlay").show()
+        $.ajax({
+            type: "GET",
+            url: "/trackeasy/mismatch/",
+            data: {
+                'name': 'get_latest_mismatch_audit_data',
+                'service': var_service,
+                'device': var_device
+            },
+            success: function(data) {
+                console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                console.log(data)
+                $("#getMismatchData_li").addClass('active')
+                $("#getMatchData_li").removeClass('active')
+                $("#mismatch_list").html("");
+                for (var i = data.mismatch.length - 1; i >= 0; i--) {
+                    createList(jQuery.parseJSON(data.mismatch[i]));
+                };
+                $("#overlay").hide()
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/mismatch/",
+                    data: {
+                        'name': 'get_mismatch_update_details',
+                    },
+                    success: function(data) {
+                        console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
+                        console.log(data)
+                        alert("data latest to "+"now")
+                        
+                    },
+                    error: function(err) {
+                        console.log("Ajax: Get error: ", err);
+                    }
+                })
+            },
+            error: function(err) {
+                console.log("Ajax: Get error: ", err);
+            }
+        })
+    }
 
     var createList = function (mismatch_app_doc) {
 
@@ -239,9 +360,9 @@ $(function(){
         $("#getMatchData_li").addClass('active')
         $("#getMismatchData_li").removeClass('active')
         // TODO : validate entries
-        // var var_temp_event_service = $("#dLabel").text().slice(0,-1);
-        // var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
-        // showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+        var var_temp_event_service = $("#dLabel").text().slice(0,-1);
+        var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
+        showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
     });
 
     $('#getMismatchData').click(function(event) {
@@ -252,9 +373,9 @@ $(function(){
         $("#getMismatchData_li").addClass('active')
         $("#getMatchData_li").removeClass('active')
         // TODO : validate entries
-        // var var_temp_event_service = $("#dLabel").text().slice(0,-1);
-        // var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
-        // showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+        var var_temp_event_service = $("#dLabel").text().slice(0,-1);
+        var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
+        showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
     });
 
     $('#updateList').click(function(event) {
@@ -277,10 +398,10 @@ $(function(){
                     console.log("Ajax: POST success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
                     // console.log(data)
                     if(localStorage.getItem("matchOrMismatch")=='match'){
-                        showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+                        showLatestMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
                     }
                     else{
-                        showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+                        showLatestMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
                     }
                     $("#overlay").hide()
                 },
@@ -300,11 +421,62 @@ $(function(){
         var id = $(this).attr('id');
         id = id.split('_');
         id = id[id.length-1];
-        $("#editeventCategory").val($("#data_ec_" + id).text());
-        $("#editeventAction").val($("#data_ea_" + id).text());
-        $("#editeventLabel").val($("#data_el_" + id).text());
+        // $("#editeventCategory").val($("#data_ec_" + id).text());
+        // $("#editeventAction").val($("#data_ea_" + id).text());
+        // $("#editeventLabel").val($("#data_el_" + id).text());
         var_temp_edit_event_service = $("#data_es_" + id).text() + '▼'
         var_temp_edit_event_device = $("#data_ed_" + id).text() + '▼'
+        $("#overlay").show()
+        $.ajax({
+            type: "GET",
+            url: "/trackeasy/",
+            data: {
+                'name': 'get_suggestion_data'
+            },
+            success: function(data) {
+                console.log("Ajax: GET suggestion data success");
+                console.log(data)
+                
+
+                var selectize = $("#editeventCategory")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.categories.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.categories[i],value:data.categories[i]})
+                };
+                selectize.addOption({text:$("#data_ec_" + id).text(),value:$("#data_ec_" + id).text()})
+                selectize.addItem($("#data_ec_" + id).text(),'silent')
+                selectize = $("#editeventAction")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.actions.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.actions[i],value:data.actions[i]})
+                };
+                selectize.addOption({text:$("#data_ea_" + id).text(),value:$("#data_ea_" + id).text()})
+                selectize.addItem($("#data_ea_" + id).text(),'silent')
+                selectize = $("#editeventLabel")[0].selectize;
+                selectize.clearOptions()
+                selectize.clear()
+                for (var i = data.labels.length - 1; i >= 0; i--) {
+                    selectize.addOption({text:data.labels[i],value:data.labels[i]})
+                };
+                var base_labels = $("#data_el_" + id).text().split(',')
+                base_labels.sort()
+                for (var i = 0; i < base_labels.length; i++) {
+                    selectize.addOption({text:base_labels[i],value:base_labels[i]})
+                };
+                for (var i = 0; i < base_labels.length; i++) {
+                    selectize.addItem(base_labels[i],'silent')
+                };
+
+                
+                $("#overlay").hide()
+            },
+            error: function(err) {
+                console.log("Ajax: Get error: ", err);
+                $("#overlay").hide()
+            }
+        })
         $('#editModalService').html("");
         $('#editModalService').append("\
             <div class='dropdown'>\

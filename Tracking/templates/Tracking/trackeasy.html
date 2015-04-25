@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <script src="/static/js/trackeasy.js"></script>
+
 <div class="container">
 	<div class="row">
 		<div class="text-center col-md-12" style="margin-top:35px;margin-bottom:35px">
@@ -41,8 +42,9 @@
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Category </p>
 						<div>
-							<select id="eventCategory" placeholder="Select category...">
-							</select>
+							<input id="eventCategory" placeholder="Select category..." class="form-control">
+							<!-- <select id="eventCategory" placeholder="Select category..."> -->
+							<!-- </select> -->
 						</div>
 						<script>
 							$('#eventCategory').selectize({
@@ -64,8 +66,9 @@
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Action </p>
 						<div>
-							<select id="eventAction" placeholder="Select action...">
-							</select>
+							<input id="eventAction" placeholder="Select category..." class="form-control">
+							<!-- <select id="eventAction" placeholder="Select action..."> -->
+							<!-- </select> -->
 						</div>
 						<script>
 							$('#eventAction').selectize({
@@ -133,8 +136,9 @@
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Category </p>
 						<div>
-							<select id="editeventCategory" placeholder="Select category...">
-							</select>
+							<input id="editeventCategory" placeholder="Select category..." class="form-control">
+							<!-- <select id="editeventCategory" placeholder="Select category..."> -->
+							<!-- </select> -->
 						</div>
 						<script>
 							$('#editeventCategory').selectize({
@@ -156,8 +160,9 @@
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Action </p>
 						<div>
-							<select id="editeventAction" placeholder="Select action...">
-							</select>
+							<input id="editeventAction" placeholder="Select category..." class="form-control">
+							<!-- <select id="editeventAction" placeholder="Select action..."> -->
+							<!-- </select> -->
 						</div>
 						<script>
 							$('#editeventAction').selectize({

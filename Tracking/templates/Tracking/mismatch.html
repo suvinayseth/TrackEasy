@@ -39,15 +39,71 @@
 					</div>
 					<div class="col-md-3" style="width:27%;">
 						<p> Event Category </p>
-						<input class="form-control"  id="editeventCategory">
+						<div>
+							<input id="editeventCategory" placeholder="Select category..." class="form-control">
+							<!-- <select id="editeventCategory" placeholder="Select category..."> -->
+							<!-- </select> -->
+						</div>
+						<script>
+							$('#editeventCategory').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+								plugins: ['restore_on_backspace'],
+							});
+						</script>
 					</div>
-					<div class="col-md-3" style="width:25%;">
+					<div class="col-md-3" style="width:27%;">
 						<p> Event Action </p>
-						<input class="form-control" id="editeventAction">
+						<div>
+							<input id="editeventAction" placeholder="Select category..." class="form-control">
+							<!-- <select id="editeventAction" placeholder="Select action..."> -->
+							<!-- </select> -->
+						</div>
+						<script>
+							$('#editeventAction').selectize({
+								create: true,
+								createOnBlur: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								highlight: false,
+								persist: true,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+								plugins: ['restore_on_backspace'],
+							});
+						</script>
 					</div>
 					<div class="col-md-12" style="padding-top:20px">
-					<p> Event Label </p>
-					<input class="form-control" id="editeventLabel">
+						<p> Event Label </p>
+						<input class="form-control" id="editeventLabel">
+						<script>
+							$('#editeventLabel').selectize({
+								persist: true,
+								createOnBlur: true,
+								create: true,
+								highlight: false,
+								openOnFocus: true,
+								closeAfterSelect: true,
+								selectOnTab: true,
+								sortField: {
+									field: 'text',
+									direction: 'asc'
+								},
+								plugins: ['restore_on_backspace'],
+							});
+						</script>
 					</div>
 				</div>
 				<div class="modal-footer" style="padding-top:14px;height:70px">
@@ -131,8 +187,8 @@
 			<div class="page-header" style="margin-top:25px;">
 				<h2>List
 					<small>
-						click on update to populate the list
-						<button class="btn btn-danger" id="updateList" style="margin-left:500px">Update</button>
+						Select Match/Mismatch to see its list
+						<button class="btn btn-danger" id="updateList" style="margin-left:500px">Get Latest</button>
 					</small>
 				</h2>
 			</div>
