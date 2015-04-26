@@ -27,9 +27,6 @@ class tracking_events_log(Document):
 	pa_checked_date = DateTimeField(required=False)
 	event_image_path = StringField(required=False)
 	event_comments = ListField(EmbeddedDocumentField(tracking_events_comments))
-	aux_mongo_match = BooleanField(required=True,default=False)
-	aux_total_count = IntField(required=True,default=0)
-	aux_unique_count = IntField(required=True,default=0)
 
 class suggestion_data(Document):
 	actions = ListField(StringField(required=True))
