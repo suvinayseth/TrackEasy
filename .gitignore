@@ -3,6 +3,7 @@
 ._*.html
 ._*
 .fuse*
+**/Tracking/scripts/
 **/TrackEasy/static/images/
 .DS_Store
 .DS_Store?
