@@ -728,7 +728,7 @@ def misbehave_app(request):
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
 				print 'if4'
 				trackeasy_overall_data = trackeasy_coll.find({'fe_tick_state':True,'pa_tick_state':True})
-				trackeasy_distinct_categories = trackeasy_overall_data.distinct('event_category')
+				trackeasy_distinct_categories = trackeasy_overall_data.distinct('event.category')
 				print 'trackeasy_data_loaded', trackeasy_distinct_categories
 				trackeasy_overall_data = None
 				

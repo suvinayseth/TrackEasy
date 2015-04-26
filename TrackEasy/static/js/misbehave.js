@@ -13,6 +13,7 @@ $(function(){
 	$("#nav_tab_misbehave").addClass("active");
 	$("#nav_tab_trackeasy").removeClass("active");
 	$("#nav_tab_mismatch").removeClass("active");
+    $("#updateList").attr("disabled","disabled");
 
 	if(localStorage.getItem("eventsDisplayService") == null){
 	    localStorage.setItem("eventsDisplayService", "All");
@@ -82,6 +83,7 @@ $(function(){
         event.preventDefault();
         $("#behavior_list").html("");
         $("#dLabel").text($(this).text()+'▼');
+        $("#updateList").attr("disabled","disabled")
     });
 
     $('.device_list').click(function(event) {
@@ -91,6 +93,7 @@ $(function(){
         event.preventDefault();
         $("#behavior_list").html("");
         $("#deviceLabel").text($(this).text()+'▼');
+        $("#updateList").attr("disabled","disabled")
     });
 
 
@@ -181,13 +184,15 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(behavior_data.event.category).replace('_','-'));
-        $("#data_ea_"+num).text(String(behavior_data.event.action).replace('_','-'));
+        $("#data_ec_"+num).text(String(behavior_data.event.category).replace(new RegExp("_", "g"),'-'));
+        $("#data_ea_"+num).text(String(behavior_data.event.action).replace(new RegExp("_", "g"),'-'));
         $("#data_es_"+num).text(behavior_data.event.service);
         $("#data_ed_"+num).text(behavior_data.event.device);
-        $("#data_el_"+num).text(behavior_data.event.label);
+        $("#data_el_"+num).text(String(behavior_data.event.label).replace(new RegExp(",", "g"),' , '));
         $("#data_TR1_"+num).text(behavior_data.count_TR1);
         $("#data_TR2_"+num).text(behavior_data.count_TR2);
+        
+
         if(behavior_data.count_TR2-behavior_data.count_TR1>0){
             $("#data_delta_"+num).text(String(behavior_data.count_TR2-behavior_data.count_TR1)+"    ("+String(parseInt(100*(behavior_data.count_TR2-behavior_data.count_TR1)/behavior_data.count_TR1))+"%)"+ "  ▲");    
         }
@@ -207,7 +212,9 @@ $(function(){
         var TR2ToDate = $('#dp4').val();
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
+        
         if($('#dp1').val() && $('#dp2').val() && $('#dp3').val() && $('#dp4').val()){
+            
             if(moment(TR2ToDate,'DD-MM-YYYY')>=moment(TR2FromDate,'DD-MM-YYYY') && 
                 moment(TR2FromDate,'DD-MM-YYYY')>=moment(TR1ToDate,'DD-MM-YYYY') && 
                 moment(TR1ToDate,'DD-MM-YYYY')>=moment(TR1FromDate,'DD-MM-YYYY')
@@ -230,7 +237,7 @@ $(function(){
                         console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
                         console.log(data)
                         $("#behavior_list").html("");
-                        data.behavior_data.sort(function(x,y){
+                        data.audit_data.sort(function(x,y){
                                             var perc_x = 0
                                             var prec_y = 0
                                             if (x.count_TR1==0 && y.count_TR2!=0){
@@ -247,13 +254,31 @@ $(function(){
                                             }
                                             
                                             })
-                        for (var i = data.behavior_data.length - 1; i >= 0; i--) {
-                            createList(data.behavior_data[i]);
+                        for (var i = data.audit_data.length - 1; i >= 0; i--) {
+                            createList(data.audit_data[i]);
                         };
+                        $.ajax({
+                            type: "GET",
+                            url: "/trackeasy/misbehave/",
+                            data: {
+                                'name': 'get_misbehave_update_details',
+                            },
+                            success: function(data) {
+                                console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
+                                alert("data latest to "+"today morning")
+                                
+                            },
+                            error: function(err) {
+                                console.log("Ajax: Get error: ", err);
+                            }
+                        })
                         $("#overlay").hide()
+                        $("#updateList").removeAttr("disabled");
                     },
                     error: function(err) {
                         console.log("Ajax: GET error: ", err);
+                        $("#overlay").hide()
+                        $("#updateList").removeAttr("disabled");
                     }
                 })
             }
@@ -288,7 +313,7 @@ $(function(){
                     type: "GET",
                     url: "/trackeasy/misbehave/",
                     data: {
-                        'name': 'get_updated_data',
+                        'name': 'get_latest_data',
                         'service': var_temp_event_service,
                         'device': var_temp_event_device,
                         'TR1_fromDate': TR1FromDate,
@@ -300,7 +325,7 @@ $(function(){
                         console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
                         console.log(data)
                         $("#behavior_list").html("");
-                        data.behavior_data.sort(function(x,y){
+                        data.audit_data.sort(function(x,y){
                                             var perc_x = 0
                                             var prec_y = 0
                                             if (x.count_TR1==0 && y.count_TR2!=0){
@@ -317,9 +342,24 @@ $(function(){
                                             }
                                             
                                             })
-                        for (var i = data.behavior_data.length - 1; i >= 0; i--) {
-                            createList(data.behavior_data[i]);
+                        for (var i = data.audit_data.length - 1; i >= 0; i--) {
+                            createList(data.audit_data[i]);
                         };
+                        $.ajax({
+                            type: "GET",
+                            url: "/trackeasy/misbehave/",
+                            data: {
+                                'name': 'get_misbehave_update_details',
+                            },
+                            success: function(data) {
+                                console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
+                                alert("data latest to "+"now")
+                                
+                            },
+                            error: function(err) {
+                                console.log("Ajax: Get error: ", err);
+                            }
+                        })
                         $("#overlay").hide()
                     },
                     error: function(err) {
@@ -337,6 +377,10 @@ $(function(){
             $("#overlay").hide()
         }
     });
+
+    
+
+
 
     $(document).on('click', '.imageupload', function (){
         console.log(" upload Event Image clicked");

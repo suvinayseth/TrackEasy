@@ -324,8 +324,8 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(mismatch_app_doc.event.category).replace('_','-'));
-        $("#data_ea_"+num).text(String(mismatch_app_doc.event.action).replace('_','-'));
+        $("#data_ec_"+num).text(String(mismatch_app_doc.event.category).replace(new RegExp("-", "g"),'_'));
+        $("#data_ea_"+num).text(String(mismatch_app_doc.event.action).replace(new RegExp("-", "g"),'_'));
         $("#data_es_"+num).text(mismatch_app_doc.event.service);
         $("#data_ed_"+num).text(mismatch_app_doc.event.device);
         $("#data_el_"+num).text(String(mismatch_app_doc.event.label).replace(new RegExp(",", "g"), ' , '));
@@ -506,10 +506,10 @@ $(function(){
                 url: "/trackeasy/edit/",
                 data: {
                     'name': 'editEvent', 
-                    'event_category': $('#editeventCategory').val().trim().replace('-','_'),
-                    'event_action': $('#editeventAction').val().trim().replace('-','_'),
+                    'event_category': $('#editeventCategory').val().trim().replace(new RegExp("-", "g"),'_'),
+                    'event_action': $('#editeventAction').val().trim().replace(new RegExp("-", "g"),'_'),
                     'event_service': var_temp_edit_event_service,
-                    'event_label': $('#editeventLabel').val().trim().replace('-','_'),
+                    'event_label': $('#editeventLabel').val().trim().replace(new RegExp(",", "g"),' , '),
                     'event_device': var_temp_edit_event_device,
                     'id':id
                 },
