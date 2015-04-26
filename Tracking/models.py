@@ -44,7 +44,7 @@ class tracking_events_alert(Document):
 	unique_count = IntField(required=True, default=0)
 	date = DateTimeField(required=True)
 
-class TrackEasy_update_details(Document):
+class trackeasy_update_details(Document):
 	suggestion_data = DateTimeField(required=True)
 	tracking_events_audit = DateTimeField(required=True)
 	tracking_events_alert = DateTimeField(required=True)
