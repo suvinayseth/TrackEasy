@@ -433,7 +433,6 @@ $(function(){
                         <li class='addModalservice_list'><a href='#'>Land</a></li>\
                         <li class='addModalservice_list'><a href='#'>Plot Projects</a></li>\
                         <li class='addModalservice_list'><a href='#'>Agents</a></li>\
-                        <li class='addModalservice_list'><a href='#'>Miscellaneous</a></li>\
             </ul></div>");
         $('#addModalDevice').html("");
         $('#addModalDevice').append("\
@@ -612,7 +611,6 @@ $(function(){
                         <li class='editModalservice_list'><a href='#'>Land</a></li>\
                         <li class='editModalservice_list'><a href='#'>Plot Projects</a></li>\
                         <li class='editModalservice_list'><a href='#'>Agents</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Miscellaneous</a></li>\
             </ul></div>");
         $('#editModalDevice').html("");
         $('#editModalDevice').append("\

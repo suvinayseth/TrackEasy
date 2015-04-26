@@ -13,6 +13,7 @@ $(function(){
     $("#nav_tab_mismatch").addClass("active");
     $("#nav_tab_trackeasy").removeClass("active");
     $("#nav_tab_misbehave").removeClass("active");
+    $("#updateList").attr("disabled","disabled");
 
     if(localStorage.getItem("eventsDisplayService") == null){
         localStorage.setItem("eventsDisplayService", "All");
@@ -30,23 +31,7 @@ $(function(){
         $("#deviceLabel").text(localStorage.getItem("eventsDisplayDevice")+'▼');
     }
 
-    // if(localStorage.getItem("matchOrMismatch") == null){
-    //     localStorage.setItem("matchOrMismatch", "mismatch");
-    //     $("#getMismatchData_li").addClass('active')
-    //     $("#getMatchData_li").removeClass('active')
-    //     showMismatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
-    // }
-    // else if(localStorage.getItem("matchOrMismatch") == 'mismatch'){
-    //     $("#getMismatchData_li").addClass('active')
-    //     $("#getMatchData_li").removeClass('active')
-    //     showMismatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
-    // }
-    // else{
-    //     $("#getMatchData_li").addClass('active')
-    //     $("#getMismatchData_li").removeClass('active')
-    //     showMmatchDataByServiceAndDevice(localStorage.getItem("eventsDisplayService"),localStorage.getItem("eventsDisplayDevice"));
-    // }
-
+    
     $('.service_list').click(function(event) {
         console.log("service selected");
         // var var_service = $(this).text();
@@ -56,6 +41,7 @@ $(function(){
         $("#mismatch_list").html("");
         $("#getMatchData_li").removeClass('active')
         $("#getMismatchData_li").removeClass('active')
+        $("#updateList").attr("disabled","disabled");
         
     });
 
@@ -68,6 +54,7 @@ $(function(){
         $("#mismatch_list").html("");
         $("#getMatchData_li").removeClass('active')
         $("#getMismatchData_li").removeClass('active')
+        $("#updateList").attr("disabled","disabled");
         
     });
 
@@ -103,7 +90,6 @@ $(function(){
                     },
                     success: function(data) {
                         console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
-                        console.log(data)
                         alert("data latest to "+"today morning")
                         
                     },
@@ -119,8 +105,6 @@ $(function(){
         })
     }
     
-
-
     var showMismatchDataByServiceAndDevice = function(var_service, var_device) {
         console.log("inside showMismatchDataByServiceAndDevice function with service",var_service, var_device);
         $("#overlay").show()
@@ -150,7 +134,6 @@ $(function(){
                     },
                     success: function(data) {
                         console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
-                        console.log(data)
                         alert("data latest to "+"today morning")
                         
                     },
@@ -194,7 +177,6 @@ $(function(){
                     },
                     success: function(data) {
                         console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
-                        console.log(data)
                         alert("data latest to "+"now")
                         
                     },
@@ -239,7 +221,6 @@ $(function(){
                     },
                     success: function(data) {
                         console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
-                        console.log(data)
                         alert("data latest to "+"now")
                         
                     },
@@ -253,6 +234,7 @@ $(function(){
             }
         })
     }
+
 
     var createList = function (mismatch_app_doc) {
 
@@ -357,12 +339,13 @@ $(function(){
         console.log("inside #getMatchData function");
         event.preventDefault();
         $("#mismatch_list").html("");
+        $("#updateList").attr("disabled","disabled");
         $("#getMatchData_li").addClass('active')
         $("#getMismatchData_li").removeClass('active')
-        // TODO : validate entries
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
         showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+        $("#updateList").removeAttr("disabled")
     });
 
     $('#getMismatchData').click(function(event) {
@@ -370,48 +353,29 @@ $(function(){
         console.log("inside #getMisatchData function");
         event.preventDefault();
         $("#mismatch_list").html("");
+        $("#updateList").attr("disabled","disabled");
         $("#getMismatchData_li").addClass('active')
         $("#getMatchData_li").removeClass('active')
-        // TODO : validate entries
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
         showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+        $("#updateList").removeAttr("disabled")
     });
 
     $('#updateList').click(function(event) {
-        $("#overlay").show()
         console.log("inside #updateList function");
         event.preventDefault();
-        // TODO : validate entries
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
         if($("#getMatchData_li").hasClass("active") || $("#getMismatchData_li").hasClass("active")){
-            $.ajax({
-                type: "POST",
-                url: "/trackeasy/mismatch/",
-                data: {
-                    'name': 'updateData',
-                    'service': var_temp_event_service,
-                    'device': var_temp_event_device
-                },
-                success: function(data) {
-                    console.log("Ajax: POST success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
-                    // console.log(data)
-                    if(localStorage.getItem("matchOrMismatch")=='match'){
-                        showLatestMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                    else{
-                        showLatestMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                    $("#overlay").hide()
-                },
-                error: function(err) {
-                    console.log("Ajax: POST error: ", err);
+                if(localStorage.getItem("matchOrMismatch")=='match'){
+                    showLatestMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
                 }
-            })
-        }
+                else{
+                    showLatestMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
+                }
+            }
         else{
-            $("#overlay").hide()
             alert("Select Match or Mismatch tab first, before updating.")
         }
     });
@@ -493,7 +457,6 @@ $(function(){
                         <li class='editModalservice_list'><a href='#'>Land</a></li>\
                         <li class='editModalservice_list'><a href='#'>Plot Projects</a></li>\
                         <li class='editModalservice_list'><a href='#'>Agents</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Miscellaneous</a></li>\
             </ul></div>");
         $('#editModalDevice').html("");
         $('#editModalDevice').append("\
