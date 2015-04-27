@@ -143,7 +143,7 @@ def track_app(request):
 	
 	if request.is_ajax() and request.GET and request.GET['name']=='get_suggestion_data':
 		print request
-		suggestions = suggestion_data.objects[1].to_json()
+		suggestions = suggestion_data.objects[0].to_json()
 		return HttpResponse(suggestions, content_type="application/json")
 
 	form = UploadForm()
