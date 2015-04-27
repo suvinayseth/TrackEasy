@@ -793,20 +793,32 @@ def misbehave_app(request):
 			data['audit_data'] = []
 
 			def get_count_2(event):
+				print 'inside count_2 function'
 				count1=0
 				count2=0
 				for i in xrange(num_days_1):
 					y1 = main_y1 + datetime.timedelta(days=i)
 					print "date is:"
 					print y1
-					temp = tracking_events_alert.objects(event=json.loads(event.to_json()),date=y1)[0]
+					print 'event being checked is', event.to_json()
+					temp = tracking_events_alert.objects(
+						event__category=event.category,
+						event__action=event.action,
+						event__device=event.device,
+						event__service=event.service,date=y1)[0]
 					count1 += temp.unique_count
 
 				for i in xrange(num_days_2):
 					y2 = main_y2 + datetime.timedelta(days=i)
 					print "date is:"
 					print y2
-					temp = tracking_events_alert.objects(event=json.loads(event.to_json()),date=y2)[0]
+					print 'event being checked is', event.to_json()
+					temp = tracking_events_alert.objects(
+						event__category=event.category,
+						event__action=event.action,
+						event__device=event.device,
+						event__service=event.service,date=y2)[0]
+					# temp = tracking_events_alert.objects(event=json.loads(event.to_json()),date=y2)[0]
 					count2 += temp.unique_count
 
 				return (count1,count2)
