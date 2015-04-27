@@ -508,41 +508,32 @@ def mismatch_app(request):
 
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
 				for var_te in tracking_events_log.objects(event__service=service_map_dict[request.GET['service']],event__device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					try:
-						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match :
-							data['match'].append(var_te.to_json())
-						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False :
-							data['mismatch'].append(var_te.to_json())
-					except:
+					temp = tracking_events_audit.objects(event=json.loads(var_te.event.to_json()))[0]
+					if temp.has_mongo_match :
+						data['match'].append(var_te.to_json())
+					elif temp.has_mongo_match==False :
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] != 'all'):
 				for var_te in tracking_events_log.objects(event__device=device_map_dict[request.GET['device']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					try:
-						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-							data['match'].append(var_te.to_json())
-						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
-							data['mismatch'].append(var_te.to_json())
-					except:
+					temp = tracking_events_audit.objects(event=json.loads(var_te.event.to_json()))[0]
+					if temp.has_mongo_match:
+						data['match'].append(var_te.to_json())
+					elif temp.has_mongo_match==False:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] == 'all'):
 				for var_te in tracking_events_log.objects(event__service=service_map_dict[request.GET['service']],fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					try:
-						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-							data['match'].append(var_te.to_json())
-						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
-							data['mismatch'].append(var_te.to_json())
-					except:
+					temp = tracking_events_audit.objects(event=json.loads(var_te.event.to_json()))[0]
+					if temp.has_mongo_match:
+						data['match'].append(var_te.to_json())
+					elif temp.has_mongo_match==False:
 						data['mismatch'].append(var_te.to_json())
 			elif(service_map_dict[request.GET['service']] == 'all' and device_map_dict[request.GET['device']] == 'all'):
 				for var_te in tracking_events_log.objects(fe_tick_state=True, pa_tick_state=True).order_by('id'):
-					try:
-						if tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match:
-							data['match'].append(var_te.to_json())
-						elif tracking_events_audit.objects(event=var_te.event)[0].has_mongo_match==False:
-							data['mismatch'].append(var_te.to_json())
-					except:
+					temp = tracking_events_audit.objects(event=json.loads(var_te.event.to_json()))[0]
+					if temp.has_mongo_match:
+						data['match'].append(var_te.to_json())
+					elif temp.has_mongo_match==False:
 						data['mismatch'].append(var_te.to_json())
-			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 
 		
@@ -808,21 +799,15 @@ def misbehave_app(request):
 					y1 = main_y1 + datetime.timedelta(days=i)
 					print "date is:"
 					print y1
-					try:
-						temp = tracking_events_alert.objects(event=event,date=y1)[0]
-						count1 += temp.unique_count
-					except:
-						count1 += 0
+					temp = tracking_events_alert.objects(event=json.loads(event.to_json()),date=y1)[0]
+					count1 += temp.unique_count
 
 				for i in xrange(num_days_2):
 					y2 = main_y2 + datetime.timedelta(days=i)
 					print "date is:"
 					print y2
-					try:
-						temp = tracking_events_alert.objects(event=event,date=y2)[0]
-						count2 += temp.unique_count
-					except:
-						count2 += 0
+					temp = tracking_events_alert.objects(event=json.loads(event.to_json()),date=y2)[0]
+					count2 += temp.unique_count
 
 				return (count1,count2)
 				
