@@ -286,17 +286,6 @@ $(function(){
                                     <button id="eventinfo_'+num+'" class="btn btn-primary eventinfo glyphicon glyphicon-info-sign" data-toggle="modal" data-target="#myShowEventInfoModal">\
                                     </button>\
                                 </span>\
-                                <span class="settings_wrapper" data-toggle="tooltip" data-placement="right" data-original-title="Settings">\
-                                    <div class="btn-group">\
-                                        <button type="button" id="settingsLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="btn btn-primary glyphicon glyphicon-cog">\
-                                                <span class="caret"></span>\
-                                        </button>\
-                                        <ul class="dropdown-menu" role="menu" aria-labelledby="settingsLabel">\
-                                            <li id="edit_'+num+'" class="edit" data-toggle="modal" data-target="#myEditModal"><a>Edit</a></li>\
-                                            <li id="delete_'+num+'" class="delete"><a>Delete</a></li>\
-                                        </ul>\
-                                    </div>\
-                                </span>\
                             </div>\
                         </div>\
                         <div class="col-md-12">\
@@ -317,7 +306,7 @@ $(function(){
         // $('.edit_wrapper').tooltip();
         // $('.duplicate').tooltip();
         // $('.delete').tooltip();
-        $('.settings_wrapper').tooltip();
+        // $('.settings_wrapper').tooltip();
         // $('.imageshow_wrapper').tooltip();
         $('.image_wrapper').tooltip();
         $('.eventinfo_wrapper').tooltip();
@@ -377,163 +366,6 @@ $(function(){
             }
         else{
             alert("Select Match or Mismatch tab first, before updating.")
-        }
-    });
-
-    $(document).on('click', '.edit', function (){
-        console.log(" edit Event clicked");
-        var id = $(this).attr('id');
-        id = id.split('_');
-        id = id[id.length-1];
-        // $("#editeventCategory").val($("#data_ec_" + id).text());
-        // $("#editeventAction").val($("#data_ea_" + id).text());
-        // $("#editeventLabel").val($("#data_el_" + id).text());
-        var_temp_edit_event_service = $("#data_es_" + id).text() + '▼'
-        var_temp_edit_event_device = $("#data_ed_" + id).text() + '▼'
-        $("#overlay").show()
-        $.ajax({
-            type: "GET",
-            url: "/trackeasy/",
-            data: {
-                'name': 'get_suggestion_data'
-            },
-            success: function(data) {
-                console.log("Ajax: GET suggestion data success");
-                console.log(data)
-                
-
-                var selectize = $("#editeventCategory")[0].selectize;
-                selectize.clearOptions()
-                selectize.clear()
-                for (var i = data.categories.length - 1; i >= 0; i--) {
-                    selectize.addOption({text:data.categories[i],value:data.categories[i]})
-                };
-                selectize.addOption({text:$("#data_ec_" + id).text(),value:$("#data_ec_" + id).text()})
-                selectize.addItem($("#data_ec_" + id).text(),'silent')
-                selectize = $("#editeventAction")[0].selectize;
-                selectize.clearOptions()
-                selectize.clear()
-                for (var i = data.actions.length - 1; i >= 0; i--) {
-                    selectize.addOption({text:data.actions[i],value:data.actions[i]})
-                };
-                selectize.addOption({text:$("#data_ea_" + id).text(),value:$("#data_ea_" + id).text()})
-                selectize.addItem($("#data_ea_" + id).text(),'silent')
-                selectize = $("#editeventLabel")[0].selectize;
-                selectize.clearOptions()
-                selectize.clear()
-                for (var i = data.labels.length - 1; i >= 0; i--) {
-                    selectize.addOption({text:data.labels[i],value:data.labels[i]})
-                };
-                var base_labels = $("#data_el_" + id).text().split(',')
-                base_labels.sort()
-                for (var i = 0; i < base_labels.length; i++) {
-                    selectize.addOption({text:base_labels[i],value:base_labels[i]})
-                };
-                for (var i = 0; i < base_labels.length; i++) {
-                    selectize.addItem(base_labels[i],'silent')
-                };
-
-                
-                $("#overlay").hide()
-            },
-            error: function(err) {
-                console.log("Ajax: Get error: ", err);
-                $("#overlay").hide()
-            }
-        })
-        $('#editModalService').html("");
-        $('#editModalService').append("\
-            <div class='dropdown'>\
-                <button id='editModalServiceDropdown' data-target='#' href='http://example.com' data-toggle='dropdown' aria-haspopup='true' role='button' aria-expanded='false' class='btn btn-default'>"+var_temp_edit_event_service+"</button>\
-                    <ul class='dropdown-menu' role='menu' aria-labelledby='dLabel'>\
-                        <li class='editModalservice_list'><a href='#'>Rent</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Buy</a></li>\
-                        <li class='editModalservice_list'><a href='#'>New Projects</a></li>\
-                        <li class='editModalservice_list'><a href='#'>PG & Hostels</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Home Loans</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Sell or Rent Property</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Serviced Apartments</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Rental Agreements</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Land</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Plot Projects</a></li>\
-                        <li class='editModalservice_list'><a href='#'>Agents</a></li>\
-            </ul></div>");
-        $('#editModalDevice').html("");
-        $('#editModalDevice').append("\
-            <div class='dropdown'>\
-                <button id='editModalDeviceDropdown' data-target='#' href='http://example.com' data-toggle='dropdown' aria-haspopup='true' role='button' aria-expanded='false' class='btn btn-default'>"+var_temp_edit_event_device+"</button>\
-                    <ul class='dropdown-menu' role='menu' aria-labelledby='deviceLabel'>\
-                        <li class='editModaldevice_list'><a href='#'>Mobile Web</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>Desktop</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>Android</a></li>\
-                        <li class='editModaldevice_list'><a href='#'>IOS</a></li>\
-                    </ul></div>");
-        
-        $(document).on('click', '.editModalservice_list', function(){
-            console.log("edit Modal dropdown service selected");
-            event.preventDefault();
-            $("#editModalServiceDropdown").text($(this).text()+'▼');
-        });
-        
-        $(document).on('click', '.editModaldevice_list', function(){
-            console.log("edit Modal dropdown device selected");
-            event.preventDefault();
-            $("#editModalDeviceDropdown").text($(this).text()+'▼');
-        });
-
-        $(".editEventClass").attr("id", "editEvent_" + id);
-        console.log('entry id is',id);
-        console.log('edit modal save id is',$(".editEventClass").attr("id"));
-    })
-
-    $('.editEventClass').click(function(event) {
-        console.log("inside edit event function");
-        event.preventDefault();
-        var id = $(this).attr('id');
-        id = id.split('_');
-        id = id[id.length-1];
-        console.log(id);
-        var var_temp_event_service = $("#dLabel").text().slice(0,-1);
-        var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
-        var var_temp_edit_event_service = $("#editModalServiceDropdown").text().slice(0,-1);
-        var var_temp_edit_event_device = $("#editModalDeviceDropdown").text().slice(0,-1);
-        if($('#editeventCategory').val().trim()=="" || $('#editeventAction').val().trim()=="" || $('#editeventLabel').val().trim()==""){
-            alert('Leave no field blank')
-        }
-        else{
-            $.ajax({
-                type: "POST",
-                url: "/trackeasy/edit/",
-                data: {
-                    'name': 'editEvent', 
-                    'event_category': $('#editeventCategory').val().trim().replace(new RegExp("-", "g"),'_'),
-                    'event_action': $('#editeventAction').val().trim().replace(new RegExp("-", "g"),'_'),
-                    'event_service': var_temp_edit_event_service,
-                    'event_label': $('#editeventLabel').val().trim().replace(new RegExp(",", "g"),' , '),
-                    'event_device': var_temp_edit_event_device,
-                    'id':id
-                },
-                success: function(data) {
-                    if(data.is_duplication){
-                        alert("Edit is leading to Duplication.. please check entered details.")
-                    }
-                    else{
-                        console.log(" Ajax: POST Success for editing event");
-                        $('#myEditModal').modal('hide');
-                                                
-                    }
-                    $("#mismatch_list").html("");
-                    if(localStorage.getItem("matchOrMismatch")=='match'){
-                        showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                    else{
-                        showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                },
-                error: function(err) {
-                    console.log("error: ", err);
-                }
-            })
         }
     });
 
@@ -670,43 +502,5 @@ $(function(){
 
 
     });
-
-    $(document).on('click', '.delete', function (){
-        $("#overlay").show()
-        var box= confirm("Are you sure you want to do this?");
-        var var_temp_event_service = $("#dLabel").text().slice(0,-1);
-        var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
-        if(box==true){ 
-            console.log("inside delete event function");
-            var id = $(this).attr('id');
-            id = id.split('_');
-            id = id[id.length-1];
-            $.ajax({
-                type: "POST",
-                url: "/trackeasy/edit/",
-                data: {
-                    'id' : id,
-                    'name': 'deleteEvent'
-                },
-                success: function() {
-                    console.log("Ajax: POST Success for deleting event");
-                    // window.location.reload();
-                    if(localStorage.getItem("matchOrMismatch")=='match'){
-                        showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                    else{
-                        showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-                    }
-                    $("#overlay").hide()
-                },
-                error: function(err) { 
-                    console.log("error: ", err);
-                }
-            })
-        }
-        else{
-            $("#overlay").hide()
-        } 
-    })
 
 });

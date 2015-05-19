@@ -28,12 +28,6 @@ class tracking_events_log(Document):
 	event_image_path = StringField(required=False)
 	event_comments = ListField(EmbeddedDocumentField(tracking_events_comments))
 
-class suggestion_data(Document):
-	actions = ListField(StringField(required=True))
-	categories = ListField(StringField(required=True))
-	labels = ListField(StringField(required=True))
-	base_labels = ListField(StringField(required=True))
-
 class tracking_events_audit(Document):
 	event = EmbeddedDocumentField(tracking_events)
 	has_mongo_match = BooleanField(required=True, default=False)

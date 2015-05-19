@@ -73,35 +73,7 @@ device_map_dict = {
 @csrf_exempt
 def track_app(request):
 	
-	# print request
-	if request.POST:
-		# print request.POST
-		# print request.POST['event_category']
-		if request.POST['name']=='add_event':
-			data={}
-			data['is_duplicate']=1
-
-			if(len(tracking_events_log.objects(event__category = request.POST['event_category'], event__action = request.POST['event_action'], event__service = service_map_dict[request.POST['event_service']], event__device = device_map_dict[request.POST['event_device']]))==0 ):
-				te = tracking_events(
-					category = request.POST['event_category'],
-					action = request.POST['event_action'],
-					service = service_map_dict[request.POST['event_service']],
-					label = [i.strip() for i in request.POST['event_label'].split(',')],
-					device = device_map_dict[request.POST['event_device']]
-					)
-				doc_te = tracking_events_log(
-					event = te
-					)
-				doc_te.save()
-				data['is_duplicate']=0
-
-			elif(len(tracking_events_log.objects(event__category = request.POST['event_category'], event__action = request.POST['event_action'], event__service = service_map_dict[request.POST['event_service']], event__device = device_map_dict[request.POST['event_device']]))>0):
-				data['is_duplicate']=1
-
-			return HttpResponse(json.dumps(data), content_type="application/json")
-
-
-	if request.is_ajax() and not request.POST:
+	if request.is_ajax() and request.GET:
 		if request.GET['name']=='getDataByServiceAndDevice':
 			data={}
 			print 'this is GET request AJAX',request.GET
@@ -141,11 +113,6 @@ def track_app(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 	
-	if request.is_ajax() and request.GET and request.GET['name']=='get_suggestion_data':
-		print request
-		suggestions = suggestion_data.objects[0].to_json()
-		return HttpResponse(suggestions, content_type="application/json")
-
 	form = UploadForm()
 	print form
 	return render_to_response('Tracking/trackeasy.html',
@@ -156,8 +123,6 @@ def track_app(request):
 
 @csrf_exempt
 def edit(request):
-	# print "Inside edit"
-	# print request.POST['name']
 	if(request.is_ajax() and request.POST['name']=='fe_confirm'):
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
 		doc = tracking_events_log.objects.get(id=doc_id)
@@ -175,58 +140,6 @@ def edit(request):
 		doc.pa_tick_state = True
 		doc.pa_checked_date = datetime.datetime.now
 		doc.save()
-
-	elif(request.is_ajax() and request.POST['name']=='editEvent'):
-		data={}
-		data['is_duplication']=1
-		flag=0
-		var_objects = tracking_events_log.objects(event__category = request.POST['event_category'], event__action = request.POST['event_action'], event__service = service_map_dict[request.POST['event_service']], event__device = device_map_dict[request.POST['event_device']])
-		if len(var_objects)==0:
-			flag=1
-		elif len(var_objects)==1 and var_objects[0].id == request.POST['id']:
-			flag=1
-		else:
-			flag=0
-
-		if flag:
-			doc_id = bson.objectid.ObjectId(request.POST['id'])
-			doc = tracking_events_log.objects.get(id=doc_id)
-			doc.event.category = request.POST['event_category']
-			doc.event.action = request.POST['event_action']
-			print 'post request from edit',request.POST['event_service']
-			doc.event.service = service_map_dict[request.POST['event_service']]
-			doc.event.device = device_map_dict[request.POST['event_device']]
-			doc.event.label = [i.strip() for i in request.POST['event_label'].split(',')]
-			doc.event_creation_date = datetime.datetime.now
-			doc.save()
-			data['is_duplication']=0
-		else:
-			data['is_duplication']=1
-
-		return HttpResponse(json.dumps(data), content_type="application/json")
-
-	elif(request.is_ajax() and request.POST['name']=='deleteEvent'):
-		# print 'trugn to delete'
-		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_events_log.objects.get(id=doc_id)
-		if(doc.event_image_path!=None):
-			os.remove(doc.event_image_path)
-		doc.delete()
-
-	elif(request.is_ajax() and request.POST['name']=='duplicateEvent'):
-		doc_id = bson.objectid.ObjectId(request.POST['id'])
-		doc = tracking_events_log.objects.get(id=doc_id)
-		te = tracking_events(
-			category = doc['event_category'],
-			action = doc['event_action'],
-			service = service_map_dict[doc['event_service']],
-			label = [i.strip() for i in doc['event_label'].split(',')],
-			device = device_map_dict[doc['event_device']]
-			)
-		duplicate_doc = tracking_events_log(
-			event=te
-			)
-		duplicate_doc.save()
 
 	elif(request.is_ajax() == False and request.method == 'POST'):
 		if 'upload_file' in request.FILES and 'uploadeventId' in request.POST:
@@ -256,7 +169,6 @@ def edit(request):
 		pa_date = doc.pa_checked_date
 		print 'dates', fe_date, pa_date
 
-	# print data
 	return render_to_response('Tracking/trackeasy.html')
 
 
@@ -297,7 +209,6 @@ def get_info(request):
 			doc.event_comments.append(comment_doc)
 			doc.save()
 
-	# print data
 	return render_to_response('Tracking/trackeasy.html')
 
 
@@ -548,8 +459,6 @@ def mismatch_app(request):
 						data['mismatch'].append(var_te.to_json())
 			return HttpResponse(json.dumps(data), content_type="application/json")
 
-		
-			
 	return render_to_response('Tracking/mismatch.html',
 		context_instance=RequestContext(request))
 	
@@ -558,6 +467,7 @@ def mismatch_app(request):
 def misbehave_app(request):
 	print "Inside misbehave app"
 	if request.is_ajax() and request.GET:
+		
 		if request.GET['name']=='get_latest_data':
 			print request.GET
 			print 'inside get_latest_data match'
@@ -909,7 +819,6 @@ def misbehave_app(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 			
-
 	return render_to_response('Tracking/misbehave.html',
 		context_instance=RequestContext(request))
 	
