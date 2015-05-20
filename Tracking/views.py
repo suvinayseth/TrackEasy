@@ -141,6 +141,10 @@ def edit(request):
 		doc.pa_checked_date = datetime.datetime.now
 		doc.save()
 
+	elif(request.is_ajax() and request.POST['name']=='git_sync'):
+		# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cronjob.dsl.tracking.configs.py')
+		print 'syncing with git'
+
 	elif(request.is_ajax() == False and request.method == 'POST'):
 		if 'upload_file' in request.FILES and 'uploadeventId' in request.POST:
 			print 'print post and files',request.FILES.keys(),request.POST.keys(), 'upload_file' in request.FILES, 'uploadeventId' in request.POST

@@ -276,7 +276,24 @@ $(function(){
 
     }
 
-    
+    $(document).on('click', '.gitSync', function (){
+        console.log('inside gitSync function');
+        $.ajax({
+            type: "POST",
+            url: "/trackeasy/edit/",
+            data: {
+                'name': 'git_sync'
+            },
+            success: function(data) {
+                console.log("synced with github");
+                // console.log(data)
+            },
+            error: function(err) { 
+                console.log("error: ", err);
+            }
+        })
+
+    })    
 
     $(document).on('change', '.fe_confirm', function (){
         var box= confirm("Are you sure you want to do this?");
