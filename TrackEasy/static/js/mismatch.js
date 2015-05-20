@@ -313,11 +313,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(mismatch_app_doc.event.category).replace(new RegExp("-", "g"),'_'));
-        $("#data_ea_"+num).text(String(mismatch_app_doc.event.action).replace(new RegExp("-", "g"),'_'));
+        $("#data_ec_"+num).text(String(mismatch_app_doc.event.category));
+        $("#data_ea_"+num).text(String(mismatch_app_doc.event.action));
         $("#data_es_"+num).text(mismatch_app_doc.event.service);
         $("#data_ed_"+num).text(mismatch_app_doc.event.device);
-        $("#data_el_"+num).text(String(mismatch_app_doc.event.label).replace(new RegExp(",", "g"), ' , '));
+        $("#data_el_"+num).text(String(mismatch_app_doc.event.label));
 
     }
 

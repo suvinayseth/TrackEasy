@@ -176,11 +176,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(backlog_doc.event.category).replace(new RegExp("_", "g"),'-'));
-        $("#data_ea_"+num).text(String(backlog_doc.event.action).replace(new RegExp("_", "g"),'-'));
+        $("#data_ec_"+num).text(String(backlog_doc.event.category));
+        $("#data_ea_"+num).text(String(backlog_doc.event.action));
         $("#data_es_"+num).text(backlog_doc.event.service);
         $("#data_ed_"+num).text(backlog_doc.event.device);
-        $("#data_el_"+num).text(String(backlog_doc.event.label).replace(new RegExp(",", "g"), ' , '));
+        $("#data_el_"+num).text(String(backlog_doc.event.label));
         if(backlog_doc.fe_tick_state){
             $("#fe_tick_status_"+num).prop('checked', true);
 
@@ -268,11 +268,11 @@ $(function(){
         // $('.imageshow_wrapper').tooltip();
         $('.image_wrapper').tooltip();
         $('.eventinfo_wrapper').tooltip();
-        $("#data_ec_"+num).text(String(approved_doc.event.category).replace(new RegExp("_", "g"),'-'));
-        $("#data_ea_"+num).text(String(approved_doc.event.action).replace(new RegExp("_", "g"),'-'));
+        $("#data_ec_"+num).text(String(approved_doc.event.category));
+        $("#data_ea_"+num).text(String(approved_doc.event.action));
         $("#data_es_"+num).text(approved_doc.event.service);
         $("#data_ed_"+num).text(approved_doc.event.device);
-        $("#data_el_"+num).text(String(approved_doc.event.label).replace(new RegExp(",", "g"), ' , '));
+        $("#data_el_"+num).text(String(approved_doc.event.label));
 
     }
 

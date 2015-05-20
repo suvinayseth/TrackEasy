@@ -184,11 +184,11 @@ $(function(){
         // $('.comments_wrapper').tooltip();
         // $('.upload_wrapper').tooltip();
 
-        $("#data_ec_"+num).text(String(behavior_data.event.category).replace(new RegExp("_", "g"),'-'));
-        $("#data_ea_"+num).text(String(behavior_data.event.action).replace(new RegExp("_", "g"),'-'));
+        $("#data_ec_"+num).text(String(behavior_data.event.category));
+        $("#data_ea_"+num).text(String(behavior_data.event.action));
         $("#data_es_"+num).text(behavior_data.event.service);
         $("#data_ed_"+num).text(behavior_data.event.device);
-        $("#data_el_"+num).text(String(behavior_data.event.label).replace(new RegExp(",", "g"),' , '));
+        $("#data_el_"+num).text(String(behavior_data.event.label));
         $("#data_TR1_"+num).text(behavior_data.count_TR1);
         $("#data_TR2_"+num).text(behavior_data.count_TR2);
         
