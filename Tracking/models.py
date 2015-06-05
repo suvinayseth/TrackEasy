@@ -39,8 +39,6 @@ class tracking_events_alert(Document):
 	date = DateTimeField(required=True)
 
 class trackeasy_update_details(Document):
-	tracking_events_log = DateTimeField(required=True)
-	tracking_events_audit = DateTimeField(required=True)
-	tracking_events_alert = DateTimeField(required=True)
+	trackeasy = DateTimeField(required=True)
 
 
