@@ -13,7 +13,7 @@ $(function(){
 	$("#nav_tab_misbehave").addClass("active");
 	$("#nav_tab_trackeasy").removeClass("active");
 	$("#nav_tab_mismatch").removeClass("active");
-    $("#updateList").attr("disabled","disabled");
+    // $("#updateList").attr("disabled","disabled");
 
 	if(localStorage.getItem("eventsDisplayService") == null){
 	    localStorage.setItem("eventsDisplayService", "All");
@@ -83,7 +83,7 @@ $(function(){
         event.preventDefault();
         $("#behavior_list").html("");
         $("#dLabel").text($(this).text()+'▼');
-        $("#updateList").attr("disabled","disabled")
+        // $("#updateList").attr("disabled","disabled")
     });
 
     $('.device_list').click(function(event) {
@@ -93,7 +93,7 @@ $(function(){
         event.preventDefault();
         $("#behavior_list").html("");
         $("#deviceLabel").text($(this).text()+'▼');
-        $("#updateList").attr("disabled","disabled")
+        // $("#updateList").attr("disabled","disabled")
     });
 
 
@@ -188,7 +188,7 @@ $(function(){
         $("#data_ea_"+num).text(String(behavior_data.event.action));
         $("#data_es_"+num).text(behavior_data.event.service);
         $("#data_ed_"+num).text(behavior_data.event.device);
-        $("#data_el_"+num).text(String(behavior_data.event.label));
+        // $("#data_el_"+num).text(String(behavior_data.event.label));
         $("#data_TR1_"+num).text(behavior_data.count_TR1);
         $("#data_TR2_"+num).text(behavior_data.count_TR2);
         
@@ -204,7 +204,7 @@ $(function(){
     }
 
     $('#getList').click(function(event) {
-        console.log("inside #updateList function");
+        console.log("inside #getList function");
         event.preventDefault();
         var TR1FromDate = $('#dp1').val();
         var TR1ToDate = $('#dp2').val();
@@ -273,12 +273,12 @@ $(function(){
                             }
                         })
                         $("#overlay").hide()
-                        $("#updateList").removeAttr("disabled");
+                        // $("#updateList").removeAttr("disabled");
                     },
                     error: function(err) {
                         console.log("Ajax: GET error: ", err);
                         $("#overlay").hide()
-                        $("#updateList").removeAttr("disabled");
+                        // $("#updateList").removeAttr("disabled");
                     }
                 })
             }
@@ -293,6 +293,7 @@ $(function(){
         }
     });
     
+/*
     $('#updateList').click(function(event) {
         $("#overlay").show()
         console.log("inside #updateList function");
@@ -377,7 +378,7 @@ $(function(){
             $("#overlay").hide()
         }
     });
-
+*/
     
 
 
@@ -478,8 +479,6 @@ $(function(){
                 console.log("Ajax: Get error: ", err);
             }
         })
-
-        
         
     })
 
@@ -511,7 +510,6 @@ $(function(){
                 console.log("error: ", err);
             }
         })
-
 
     });
 

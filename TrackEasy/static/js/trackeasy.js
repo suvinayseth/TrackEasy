@@ -180,7 +180,8 @@ $(function(){
         $("#data_ea_"+num).text(String(backlog_doc.event.action));
         $("#data_es_"+num).text(backlog_doc.event.service);
         $("#data_ed_"+num).text(backlog_doc.event.device);
-        $("#data_el_"+num).text(String(backlog_doc.event.label));
+        $("#data_el_"+num).text(String(backlog_doc.event.label).replace(new RegExp(",", "g"), ' , '));
+        // $("#data_el_"+num).text(String(backlog_doc.event.label));
         if(backlog_doc.fe_tick_state){
             $("#fe_tick_status_"+num).prop('checked', true);
 
@@ -272,7 +273,8 @@ $(function(){
         $("#data_ea_"+num).text(String(approved_doc.event.action));
         $("#data_es_"+num).text(approved_doc.event.service);
         $("#data_ed_"+num).text(approved_doc.event.device);
-        $("#data_el_"+num).text(String(approved_doc.event.label));
+        // $("#data_el_"+num).text(String(approved_doc.event.label));
+        $("#data_el_"+num).text(String(approved_doc.event.label).replace(new RegExp(",", "g"), ' , '));
 
     }
 
@@ -285,8 +287,14 @@ $(function(){
                 'name': 'git_sync'
             },
             success: function(data) {
-                console.log("synced with github");
-                // console.log(data)
+                if(data.success){
+                    console.log("synced with github");
+                    location.reload()
+                }
+                else{
+                    console.log(data.error)
+                    console.log("git sync error, please check")
+                }
             },
             error: function(err) { 
                 console.log("error: ", err);

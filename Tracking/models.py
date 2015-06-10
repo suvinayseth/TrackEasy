@@ -1,12 +1,12 @@
 from django.db import models
 from django import forms
 from mongoengine import *
-from datetime import datetime
+from datetime import datetime as models_datetime
 # Create your models here.
 
 class tracking_events_comments(EmbeddedDocument):
     author = StringField(required=True)
-    comment_datetime = DateTimeField(required=True, default=datetime.now)
+    comment_datetime = DateTimeField(required=True, default=models_datetime.now())
     comment = StringField(required=True)
 
 
@@ -20,7 +20,7 @@ class tracking_events(EmbeddedDocument):
 
 class tracking_events_log(Document):
 	event = EmbeddedDocumentField(tracking_events)
-	event_creation_date = DateTimeField(required=True, default=datetime.now)
+	event_creation_date = DateTimeField(required=True, default=models_datetime.now())
 	fe_tick_state = BooleanField(required=True, default=False)
 	pa_tick_state = BooleanField(required=True, default=False)
 	fe_checked_date_latest = DateTimeField(required=False)
@@ -39,6 +39,6 @@ class tracking_events_alert(Document):
 	date = DateTimeField(required=True)
 
 class trackeasy_update_details(Document):
-	trackeasy = DateTimeField(required=True)
+	trackeasy_last_updated = DateTimeField(required=True)
 
 

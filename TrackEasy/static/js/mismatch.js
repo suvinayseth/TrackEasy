@@ -13,7 +13,7 @@ $(function(){
     $("#nav_tab_mismatch").addClass("active");
     $("#nav_tab_trackeasy").removeClass("active");
     $("#nav_tab_misbehave").removeClass("active");
-    $("#updateList").attr("disabled","disabled");
+    // $("#updateList").attr("disabled","disabled");
 
     if(localStorage.getItem("eventsDisplayService") == null){
         localStorage.setItem("eventsDisplayService", "All");
@@ -41,7 +41,7 @@ $(function(){
         $("#mismatch_list").html("");
         $("#getMatchData_li").removeClass('active')
         $("#getMismatchData_li").removeClass('active')
-        $("#updateList").attr("disabled","disabled");
+        // $("#updateList").attr("disabled","disabled");
         
     });
 
@@ -54,7 +54,7 @@ $(function(){
         $("#mismatch_list").html("");
         $("#getMatchData_li").removeClass('active')
         $("#getMismatchData_li").removeClass('active')
-        $("#updateList").attr("disabled","disabled");
+        // $("#updateList").attr("disabled","disabled");
         
     });
 
@@ -148,6 +148,7 @@ $(function(){
         })
     }
 
+/*
     var showLatestMatchDataByServiceAndDevice = function(var_service, var_device) {
         console.log("inside showMatchDataByServiceAndDevice function with service",var_service, var_device);
         $("#overlay").show()
@@ -234,7 +235,7 @@ $(function(){
             }
         })
     }
-
+*/
 
     var createList = function (mismatch_app_doc) {
 
@@ -317,7 +318,8 @@ $(function(){
         $("#data_ea_"+num).text(String(mismatch_app_doc.event.action));
         $("#data_es_"+num).text(mismatch_app_doc.event.service);
         $("#data_ed_"+num).text(mismatch_app_doc.event.device);
-        $("#data_el_"+num).text(String(mismatch_app_doc.event.label));
+        // $("#data_el_"+num).text(String(mismatch_app_doc.event.label));
+        $("#data_el_"+num).text(String(mismatch_app_doc.event.label).replace(new RegExp(",", "g"), ' , '));
 
     }
 
@@ -328,13 +330,13 @@ $(function(){
         console.log("inside #getMatchData function");
         event.preventDefault();
         $("#mismatch_list").html("");
-        $("#updateList").attr("disabled","disabled");
+        // $("#updateList").attr("disabled","disabled");
         $("#getMatchData_li").addClass('active')
         $("#getMismatchData_li").removeClass('active')
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
         showMatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-        $("#updateList").removeAttr("disabled")
+        // $("#updateList").removeAttr("disabled")
     });
 
     $('#getMismatchData').click(function(event) {
@@ -342,15 +344,16 @@ $(function(){
         console.log("inside #getMisatchData function");
         event.preventDefault();
         $("#mismatch_list").html("");
-        $("#updateList").attr("disabled","disabled");
+        // $("#updateList").attr("disabled","disabled");
         $("#getMismatchData_li").addClass('active')
         $("#getMatchData_li").removeClass('active')
         var var_temp_event_service = $("#dLabel").text().slice(0,-1);
         var var_temp_event_device = $("#deviceLabel").text().slice(0,-1);
         showMismatchDataByServiceAndDevice(var_temp_event_service,var_temp_event_device)
-        $("#updateList").removeAttr("disabled")
+        // $("#updateList").removeAttr("disabled")
     });
 
+/*    
     $('#updateList').click(function(event) {
         console.log("inside #updateList function");
         event.preventDefault();
@@ -369,7 +372,7 @@ $(function(){
         }
     });
 
-
+*/
     $(document).on('click', '.imageupload', function (){
         console.log(" upload Event Image clicked");
         var id = $(this).attr('id');
@@ -466,8 +469,6 @@ $(function(){
                 console.log("Ajax: Get error: ", err);
             }
         })
-
-        
         
     })
 

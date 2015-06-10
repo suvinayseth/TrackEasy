@@ -15,45 +15,48 @@ import bson
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 import json
-import datetime
+import datetime as views_datetime
 import time
 from forms import UploadForm
 import os
 import collections
 from collections import defaultdict
-
+from Tracking.mongo_config import *
+from Tracking.scripts.cron_sync_log import *
+# from Tracking.scripts.cron_sync_log import *
+# from Tracking.scripts.cron_sync_log import *
 
 service_map_dict = {
 	'All':'all',
 	'Rent':'rent',
 	'Buy':'buy',
-	'New Projects':'new-projects',
+	'New Projects':'new_projects',
 	'PG & Hostels':'pg',
-	'Home Loans':'home-loans',
-	'Sell or Rent Property':'sell or rent property',
-	'Serviced Apartments':'serviced-apartments',
-	'Rental Agreements':'rental-agreements',
+	'Home Loans':'home_loans',
+	'Sell or Rent Property':'sell_or_rent_property',
+	'Serviced Apartments':'serviced_apartments',
+	'Rental Agreements':'rental_agreements',
 	'Land':'land',
-	'Plot Projects':'plot-projects',
+	'Plot Projects':'plot_projects',
 	'Agents':'agents',
 	'all':'all',
 	'rent':'rent',
 	'buy':'buy',
-	'new projects':'new-projects',
+	'new projects':'new_projects',
 	'pg & hostels':'pg',
-	'home loans':'home-loans',
+	'home loans':'home_loans',
 	'sell or rent property':'sell or rent property',
-	'serviced apartments':'serviced-apartments',
-	'rental agreements':'rental-agreements',
+	'serviced apartments':'serviced_apartments',
+	'rental agreements':'rental_agreements',
 	'land':'land',
-	'plot projects':'plot-projects',
+	'plot projects':'plot_projects',
 	'agents':'agents',
-	'new-projects':'new-projects',
-	'home-loans':'home-loans',
-	'serviced-apartments':'serviced-apartments',
-	'rental-agreements':'rental-agreements',
+	'new-projects':'new_projects',
+	'home-loans':'home_loans',
+	'serviced-apartments':'serviced_apartments',
+	'rental-agreements':'rental_agreements',
 	'land':'land',
-	'plot-projects':'plot-projects'
+	'plot-projects':'plot_projects'
 }
 device_map_dict = {
 	'All':'all',
@@ -131,19 +134,29 @@ def edit(request):
 		elif(request.POST['status']=='false'):
 			status=False
 		doc.fe_tick_state = status
-		doc.fe_checked_date_latest = datetime.datetime.now
+		doc.fe_checked_date_latest = views_datetime.datetime.now()
 		doc.save()
 
 	elif(request.is_ajax() and request.POST['name']=='pa_confirm'):
 		doc_id = bson.objectid.ObjectId(request.POST['id'])
 		doc = tracking_events_log.objects.get(id=doc_id)
 		doc.pa_tick_state = True
-		doc.pa_checked_date = datetime.datetime.now
+		doc.pa_checked_date = views_datetime.datetime.now()
 		doc.save()
 
 	elif(request.is_ajax() and request.POST['name']=='git_sync'):
-		# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cronjob.dsl.tracking.configs.py')
+		data={}
+		data['success']=0
+		try:
+			exec_cron_sync_log()
+			# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cron_sync_audit.py')
+			# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cron_sync_alert.py')
+			data['success']=1
+		except Exception as e :
+			data['error']=str(e)
 		print 'syncing with git'
+		return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 	elif(request.is_ajax() == False and request.method == 'POST'):
 		if 'upload_file' in request.FILES and 'uploadeventId' in request.POST:
@@ -229,16 +242,9 @@ def mismatch_app(request):
 			print 'this is GET request AJAX',request.GET
 			data['match']=[]
 			
-			analytics_con = MongoClient('mongodb://dsl_read:dsl@localhost:3338/analytics',read_preference = ReadPreference.SECONDARY)
-			analytics_db = 'analytics'
-			trackeasy_con = MongoClient(host='localhost',port=27017)
-			trackeasy_db='vasu'
-			trackeasy_coll = trackeasy_con[trackeasy_db]['tracking_events_log']
-			print 'mongo connections made'
-			
-			y = datetime.datetime.now().date() - datetime.timedelta(days = 2)
+			y = views_datetime.datetime.now().date() - views_datetime.timedelta(days = 2)
 			ts_y =  int(time.mktime(y.timetuple())*1000)
-			yutcd = datetime.datetime.utcfromtimestamp(ts_y/1000)
+			yutcd = views_datetime.datetime.utcfromtimestamp(ts_y/1000)
 			yutcoid = ObjectId.from_datetime(yutcd)
 			
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
@@ -325,16 +331,9 @@ def mismatch_app(request):
 			print 'this is GET request AJAX',request.GET
 			data['mismatch']=[]
 			
-			analytics_con = MongoClient('mongodb://dsl_read:dsl@localhost:3338/analytics',read_preference = ReadPreference.SECONDARY)
-			analytics_db = 'analytics'
-			trackeasy_con = MongoClient(host='localhost',port=27017)
-			trackeasy_db='vasu'
-			trackeasy_coll = trackeasy_con[trackeasy_db]['tracking_events_log']
-			print 'mongo connections made'
-			
-			y = datetime.datetime.now().date() - datetime.timedelta(days = 2)
+			y = views_datetime.datetime.now().date() - views_datetime.timedelta(days = 2)
 			ts_y =  int(time.mktime(y.timetuple())*1000)
-			yutcd = datetime.datetime.utcfromtimestamp(ts_y/1000)
+			yutcd = views_datetime.datetime.utcfromtimestamp(ts_y/1000)
 			yutcoid = ObjectId.from_datetime(yutcd)
 			
 			if(service_map_dict[request.GET['service']] != 'all' and device_map_dict[request.GET['device']] != 'all'):
@@ -505,22 +504,16 @@ def misbehave_app(request):
 			TR2_todate_year = TR2_todate_array[2]
 
 			# print int(fromdate_year)
-			main_y1 = datetime.datetime(int(TR1_fromdate_year), int(TR1_fromdate_month), int(TR1_fromdate_day))
-			main_t1 = datetime.datetime(int(TR1_todate_year), int(TR1_todate_month), int(TR1_todate_day)) + datetime.timedelta(days=1)
+			main_y1 = views_datetime.datetime(int(TR1_fromdate_year), int(TR1_fromdate_month), int(TR1_fromdate_day))
+			main_t1 = views_datetime.datetime(int(TR1_todate_year), int(TR1_todate_month), int(TR1_todate_day)) + views_datetime.timedelta(days=1)
 			num_days_1 = (main_t1-main_y1).days
 
-			main_y2 = datetime.datetime(int(TR2_fromdate_year), int(TR2_fromdate_month), int(TR2_fromdate_day))
-			main_t2 = datetime.datetime(int(TR2_todate_year), int(TR2_todate_month), int(TR2_todate_day)) + datetime.timedelta(days=1)
+			main_y2 = views_datetime.datetime(int(TR2_fromdate_year), int(TR2_fromdate_month), int(TR2_fromdate_day))
+			main_t2 = views_datetime.datetime(int(TR2_todate_year), int(TR2_todate_month), int(TR2_todate_day)) + views_datetime.timedelta(days=1)
 			num_days_2 = (main_t2-main_y2).days
 
 			data={}
 			data['audit_data'] = []
-			analytics_con = MongoClient('mongodb://dsl_read:dsl@localhost:3338/analytics',read_preference = ReadPreference.SECONDARY)
-			analytics_db = 'analytics'
-			trackeasy_con = MongoClient(host='localhost',port=27017)
-			trackeasy_db='vasu'
-			trackeasy_coll = trackeasy_con[trackeasy_db]['tracking_events_log']
-			print 'mongo connections made'
 
 			def get_count(coll,event):
 				count1=0
@@ -528,14 +521,14 @@ def misbehave_app(request):
 				print 'num_days_1', num_days_1
 				for i in xrange(num_days_1):
 					print i
-					y1 = main_y1 + datetime.timedelta(days=i)
-					t1 = main_y1 + datetime.timedelta(days=i+1)
+					y1 = main_y1 + views_datetime.timedelta(days=i)
+					t1 = main_y1 + views_datetime.timedelta(days=i+1)
 					print "dates are:"
 					print y1,t1
 					ts_y1 =  int(time.mktime(y1.timetuple())*1000)
 					ts_t1 = int(time.mktime(t1.timetuple())*1000)
-					yutcd1 = datetime.datetime.utcfromtimestamp(ts_y1/1000)
-					tutcd1 = datetime.datetime.utcfromtimestamp(ts_t1/1000)
+					yutcd1 = views_datetime.datetime.utcfromtimestamp(ts_y1/1000)
+					tutcd1 = views_datetime.datetime.utcfromtimestamp(ts_t1/1000)
 					yutcoid1 = ObjectId.from_datetime(yutcd1)
 					tutcoid1 = ObjectId.from_datetime(tutcd1)
 					print yutcoid1, tutcoid1
@@ -543,14 +536,14 @@ def misbehave_app(request):
 				print 'num_days_2', num_days_2
 				for i in xrange(num_days_2):
 					print i
-					y2 = main_y2 + datetime.timedelta(days=i)
-					t2 = main_y2 + datetime.timedelta(days=i+1)
+					y2 = main_y2 + views_datetime.timedelta(days=i)
+					t2 = main_y2 + views_datetime.timedelta(days=i+1)
 					print "dates are:"
 					print y2,t2
 					ts_y2 =  int(time.mktime(y2.timetuple())*1000)
 					ts_t2 = int(time.mktime(t2.timetuple())*1000)
-					yutcd2 = datetime.datetime.utcfromtimestamp(ts_y2/1000)
-					tutcd2 = datetime.datetime.utcfromtimestamp(ts_t2/1000)
+					yutcd2 = views_datetime.datetime.utcfromtimestamp(ts_y2/1000)
+					tutcd2 = views_datetime.datetime.utcfromtimestamp(ts_t2/1000)
 					yutcoid2 = ObjectId.from_datetime(yutcd2)
 					tutcoid2 = ObjectId.from_datetime(tutcd2)
 					print yutcoid2, tutcoid2
@@ -703,14 +696,14 @@ def misbehave_app(request):
 			TR2_todate_year = TR2_todate_array[2]
 
 			# print int(fromdate_year)
-			main_y1 = datetime.datetime(int(TR1_fromdate_year), int(TR1_fromdate_month), int(TR1_fromdate_day))
-			main_t1 = datetime.datetime(int(TR1_todate_year), int(TR1_todate_month), int(TR1_todate_day)) + datetime.timedelta(days=1)
+			main_y1 = views_datetime.datetime(int(TR1_fromdate_year), int(TR1_fromdate_month), int(TR1_fromdate_day))
+			main_t1 = views_datetime.datetime(int(TR1_todate_year), int(TR1_todate_month), int(TR1_todate_day)) + views_datetime.timedelta(days=1)
 			num_days_1 = (main_t1-main_y1).days
 			print "dates are:"
 			print main_y1,main_t1
 			
-			main_y2 = datetime.datetime(int(TR2_fromdate_year), int(TR2_fromdate_month), int(TR2_fromdate_day))
-			main_t2 = datetime.datetime(int(TR2_todate_year), int(TR2_todate_month), int(TR2_todate_day)) + datetime.timedelta(days=1)
+			main_y2 = views_datetime.datetime(int(TR2_fromdate_year), int(TR2_fromdate_month), int(TR2_fromdate_day))
+			main_t2 = views_datetime.datetime(int(TR2_todate_year), int(TR2_todate_month), int(TR2_todate_day)) + views_datetime.timedelta(days=1)
 			num_days_2 = (main_t2-main_y2).days
 			print "dates are:"
 			print main_y2,main_t2
@@ -723,7 +716,7 @@ def misbehave_app(request):
 				count1=0
 				count2=0
 				for i in xrange(num_days_1):
-					y1 = main_y1 + datetime.timedelta(days=i)
+					y1 = main_y1 + views_datetime.timedelta(days=i)
 					print "date is:"
 					print y1
 					print 'event being checked is', event.to_json()
@@ -738,7 +731,7 @@ def misbehave_app(request):
 						count1 += 0
 
 				for i in xrange(num_days_2):
-					y2 = main_y2 + datetime.timedelta(days=i)
+					y2 = main_y2 + views_datetime.timedelta(days=i)
 					print "date is:"
 					print y2
 					print 'event being checked is', event.to_json()
