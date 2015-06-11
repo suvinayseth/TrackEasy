@@ -23,6 +23,7 @@ import collections
 from collections import defaultdict
 from Tracking.mongo_config import *
 from Tracking.scripts.cron_sync_log import *
+from Tracking.scripts.cron_sync_audit import *
 # from Tracking.scripts.cron_sync_log import *
 # from Tracking.scripts.cron_sync_log import *
 
@@ -149,7 +150,7 @@ def edit(request):
 		data['success']=0
 		try:
 			exec_cron_sync_log()
-			# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cron_sync_audit.py')
+			exec_cron_sync_audit()
 			# execfile('/home/dev/Akshay/TrackEasy_project/Tracking/scripts/cron_sync_alert.py')
 			data['success']=1
 		except Exception as e :
