@@ -1,5 +1,5 @@
 # import sys
-import os.path
+import os,os.path
 import subprocess
 # from pymongo import *
 # from bson.objectid import ObjectId
@@ -78,7 +78,13 @@ def edit_event(event_file):
     objects_list = tracking_events_log.objects(event__device = event_device_mongo,
         event__category = event_category,
         event__action = event_action
-    ).delete()
+    )
+    obj_ids = [str(var_obj['id']) for var_obj in objects_list]
+    for var_obj_id in obj_ids:
+        event_image_path = 'TrackEasy/static/images/'+var_obj_id+'.png'
+        os.remove(event_image_path)
+    objects_list.delete()
+    
     event_label = get_labels(event_device, event_data)
     for event_service in event_services:
         doc_te = tracking_events(
@@ -129,6 +135,10 @@ def delete_event(event_file):
         event__action = event_action,
     )
     if objects_list:
+        obj_ids = [str(var_obj['id']) for var_obj in objects_list]
+        for var_obj_id in obj_ids:
+            event_image_path = 'TrackEasy/static/images/'+var_obj_id+'.png'
+            os.remove(event_image_path)
         objects_list.delete()
     else:
         print event_device+'/'+event_category+'/'+event_action+' does not exist; it cannot be deleted'
