@@ -82,7 +82,8 @@ def edit_event(event_file):
     obj_ids = [str(var_obj['id']) for var_obj in objects_list]
     for var_obj_id in obj_ids:
         event_image_path = 'TrackEasy/static/images/'+var_obj_id+'.png'
-        os.remove(event_image_path)
+        if os.path.exists(event_image_path):
+            os.remove(event_image_path)
     objects_list.delete()
     
     event_label = get_labels(event_device, event_data)
@@ -138,7 +139,8 @@ def delete_event(event_file):
         obj_ids = [str(var_obj['id']) for var_obj in objects_list]
         for var_obj_id in obj_ids:
             event_image_path = 'TrackEasy/static/images/'+var_obj_id+'.png'
-            os.remove(event_image_path)
+            if os.path.exists(event_image_path):
+                os.remove(event_image_path)
         objects_list.delete()
     else:
         print event_device+'/'+event_category+'/'+event_action+' does not exist; it cannot be deleted'
