@@ -218,6 +218,14 @@ def get_info(request):
 			print json.dumps(data)
 			return HttpResponse(json.dumps(data), content_type="application/json")
 
+		if (request.GET['name']=='getTrackeasyUpdateDetails'):
+			data={}
+			update_details = trackeasy_update_details.objects().order_by('id')
+			update_datetime = str(update_details[0]['trackeasy_last_updated'])
+			data['update_datetime']=update_datetime
+			return HttpResponse(json.dumps(data), content_type="application/json")
+
+
 	elif(request.is_ajax() and request.method == 'POST'):
 		if (request.POST['name']=='addComment'):
 			print 'print adding Comment',request.POST

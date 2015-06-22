@@ -54,6 +54,21 @@ $(function(){
                 for (var i = data.approved.length - 1; i >= 0; i--) {
                     createApproved(jQuery.parseJSON(data.approved[i]));
                 };
+                $.ajax({
+                    type: "GET",
+                    url: "/trackeasy/get_info/",
+                    data: {
+                        'name': 'getTrackeasyUpdateDetails',
+                    },
+                    success: function(data) {
+                        console.log("update details gotten");
+                        alert("last complete sync done at "+data.update_datetime)
+                        
+                    },
+                    error: function(err) {
+                        console.log("Ajax: Get error: ", err);
+                    }
+                })
                 $("#overlay").hide()
             },
             error: function(err) {

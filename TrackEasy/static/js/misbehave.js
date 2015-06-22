@@ -259,13 +259,13 @@ $(function(){
                         };
                         $.ajax({
                             type: "GET",
-                            url: "/trackeasy/misbehave/",
+                            url: "/trackeasy/get_info/",
                             data: {
-                                'name': 'get_misbehave_update_details',
+                                'name': 'getTrackeasyUpdateDetails',
                             },
                             success: function(data) {
-                                console.log("Ajax: GET success with service selection and device selection ", var_temp_event_service, var_temp_event_device);
-                                alert("data latest to "+"today morning")
+                                console.log("update details gotten");
+                                alert("last complete sync done at "+data.update_datetime)
                                 
                             },
                             error: function(err) {

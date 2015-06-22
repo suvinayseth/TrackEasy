@@ -84,13 +84,13 @@ $(function(){
                 $("#overlay").hide()
                 $.ajax({
                     type: "GET",
-                    url: "/trackeasy/mismatch/",
+                    url: "/trackeasy/get_info/",
                     data: {
-                        'name': 'get_mismatch_update_details',
+                        'name': 'getTrackeasyUpdateDetails',
                     },
                     success: function(data) {
-                        console.log("Ajax: GET success with service selection and device selection ", var_service, var_device);
-                        alert("data latest to "+"today morning")
+                        console.log("update details gotten");
+                        alert("last complete sync done at "+data.update_datetime)
                         
                     },
                     error: function(err) {
