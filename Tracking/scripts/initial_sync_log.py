@@ -10,7 +10,7 @@ import collections
 from collections import defaultdict
 # import csv
 # import pdb
-import datetime
+import datetime as dt
 from Tracking.models import *
 
 
@@ -115,8 +115,8 @@ for device in list_devices:
                     event = doc_te,
                     fe_tick_state = True,
                     pa_tick_state = True,
-                    fe_checked_date_latest = datetime.now(),
-                    pa_checked_date = datetime.now()
+                    fe_checked_date_latest = dt.datetime.now(),
+                    pa_checked_date = dt.datetime.now()
                 )
                 doc_te_log.save()
                 count += 1
